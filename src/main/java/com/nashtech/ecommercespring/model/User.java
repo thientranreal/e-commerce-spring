@@ -1,6 +1,10 @@
 package com.nashtech.ecommercespring.model;
 
+import com.nashtech.ecommercespring.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,9 +21,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Email
+    @Column(unique = true)
     private String email;
+
+    @Size(min = 5, max = 60)
+    @Column(length = 60)
     private String password;
+
+    @NotBlank
+    @Size(max = 50)
+    @Column(length = 50)
     private String firstName;
+
+    @NotBlank
+    @Size(max = 50)
+    @Column(length = 50)
     private String lastName;
 
     @Enumerated(EnumType.STRING)
@@ -28,17 +45,13 @@ public class User {
     private LocalDateTime createdOn;
     private LocalDateTime lastUpdatedOn;
 
-    public enum Role {
-        CUSTOMER, ADMIN
-    }
-
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Rating> ratings;
 
     @OneToOne(mappedBy = "user")
     private Cart cart;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Order> orders;
 
     @PrePersist
