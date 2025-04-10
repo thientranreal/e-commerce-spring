@@ -39,13 +39,16 @@ public class SecurityConfig {
 
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((authorize) -> {
-                    authorize.requestMatchers(HttpMethod.POST, "/api/users",
-                            "/api/users/login")
-                            .permitAll();
-                    authorize.requestMatchers(HttpMethod.GET, "/api/users",
+                    authorize.requestMatchers(HttpMethod.POST,
+                            "/api/users",
+                            "/api/users/login"
+                    ).permitAll();
+                    authorize.requestMatchers(HttpMethod.GET,
+                            "/api/users",
                             "/v3/api-docs/**",
                             "/swagger-ui.html",
-                            "/swagger-ui/**").permitAll();
+                            "/swagger-ui/**"
+                    ).permitAll();
                     authorize.anyRequest().authenticated();
                 }).httpBasic(Customizer.withDefaults());
 

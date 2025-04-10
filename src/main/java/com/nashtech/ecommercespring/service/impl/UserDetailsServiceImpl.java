@@ -1,4 +1,4 @@
-package com.nashtech.ecommercespring.service;
+package com.nashtech.ecommercespring.service.impl;
 
 import com.nashtech.ecommercespring.model.User;
 import com.nashtech.ecommercespring.repository.UserRepository;
@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Service
 @AllArgsConstructor
-public class UserInfoDetailsService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
