@@ -2,6 +2,8 @@ package com.nashtech.ecommercespring.service.impl;
 
 import com.nashtech.ecommercespring.dto.AuthRequest;
 import com.nashtech.ecommercespring.dto.UserDTO;
+import com.nashtech.ecommercespring.dto.UserSignUpDTO;
+import com.nashtech.ecommercespring.enums.Role;
 import com.nashtech.ecommercespring.exception.BadRequestException;
 import com.nashtech.ecommercespring.exception.NotFoundException;
 import com.nashtech.ecommercespring.model.User;
@@ -47,8 +49,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
+    public UserSignUpDTO signUp(UserSignUpDTO userSignUpDTO) {
+        if (userRepository.findByEmail(userSignUpDTO.getEmail()).isPresent()) {
+            throw new BadRequestException("Email already exists");
+        }
 
+        User user = new User();
+        user.setEmail(userSignUpDTO.getEmail());
+        user.setPassword(encoder.encode(userSignUpDTO.getPassword()));
+        user.setFirstName(userSignUpDTO.getFirstName());
+        user.setLastName(userSignUpDTO.getLastName());
+        user.setPhone(userSignUpDTO.getPhone());
+        user.setAddress(userSignUpDTO.getAddress());
+        user.setRole(Role.ROLE_USER);
+
+        return new UserSignUpDTO(userRepository.save(user));
+
+    }
+
+    @Override
+    public UserDTO createUser(UserDTO userDTO) {
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
             throw new BadRequestException("Email already exists");
         }
@@ -58,6 +78,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encoder.encode(userDTO.getPassword()));
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
+        user.setPhone(userDTO.getPhone());
+        user.setAddress(userDTO.getAddress());
         user.setRole(userDTO.getRole());
 
         return new UserDTO(userRepository.save(user));
@@ -80,6 +102,8 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDTO.getEmail());
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
+        user.setPhone(userDTO.getPhone());
+        user.setAddress(userDTO.getAddress());
 
         if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
             user.setPassword(encoder.encode(userDTO.getPassword()));
