@@ -30,6 +30,12 @@ public class User {
     @Column(length = 50, nullable = false)
     private String lastName;
 
+    @Column(length = 15)
+    private String phone;
+
+    private String address;
+
+    @Column(length = 10, nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 

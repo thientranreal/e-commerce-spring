@@ -32,6 +32,14 @@ public class UserDTO {
     @Size(max = 50)
     private String lastName;
 
+    @Size(max = 15)
+    private String phone;
+    
+    @Size(max = 255)
+    private String address;
+
+    @NotBlank
+    @Size(max = 10)
     private Role role;
 
     public UserDTO(User user) {
@@ -40,6 +48,8 @@ public class UserDTO {
         this.password = user.getPassword();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        this.phone = user.getPhone();
+        this.address = user.getAddress();
         this.role = user.getRole();
     }
 }
