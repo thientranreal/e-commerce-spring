@@ -2,6 +2,11 @@ package com.nashtech.ecommercespring.config;
 
 import com.nashtech.ecommercespring.security.JwtAuthenticationEntryPoint;
 import com.nashtech.ecommercespring.security.JwtAuthenticationFilter;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,15 +49,17 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> {
                     authorize.requestMatchers(HttpMethod.POST,
-                            "/api/users",
+                            "/api/users/signup",
                             "/api/users/login"
                     ).permitAll();
                     authorize.requestMatchers(HttpMethod.GET,
-                            "/api/users",
                             "/v3/api-docs/**",
                             "/swagger-ui.html",
                             "/swagger-ui/**"
                     ).permitAll();
+                    authorize.requestMatchers(
+                            "/api/users/**"
+                    ).hasRole("ADMIN");
                     authorize.anyRequest().authenticated();
                 }).httpBasic(Customizer.withDefaults());
 
@@ -67,5 +74,23 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        final String securitySchemeName = "bearerAuth";
+
+        return new OpenAPI()
+                .info(new Info().title("My API").version("v1"))
+                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
+                .components(new Components()
+                        .addSecuritySchemes(securitySchemeName,
+                                new SecurityScheme()
+                                        .name(securitySchemeName)
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT")
+                        )
+                );
     }
 }
