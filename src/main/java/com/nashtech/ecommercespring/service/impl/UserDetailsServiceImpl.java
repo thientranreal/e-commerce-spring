@@ -1,5 +1,6 @@
 package com.nashtech.ecommercespring.service.impl;
 
+import com.nashtech.ecommercespring.exception.NotFoundException;
 import com.nashtech.ecommercespring.model.User;
 import com.nashtech.ecommercespring.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not exists by Email"));
+                .orElseThrow(() -> new NotFoundException("User not exists by Email"));
 
         Set<GrantedAuthority> authorities = Set.of(
                 new SimpleGrantedAuthority(user.getRole().name())
