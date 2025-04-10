@@ -34,12 +34,10 @@ public class UserDTO {
 
     @Size(max = 15)
     private String phone;
-    
+
     @Size(max = 255)
     private String address;
 
-    @NotBlank
-    @Size(max = 10)
     private Role role;
 
     public UserDTO(User user) {
