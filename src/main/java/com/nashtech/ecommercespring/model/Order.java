@@ -1,7 +1,6 @@
 package com.nashtech.ecommercespring.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,8 +18,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @DecimalMin(value = "0", inclusive = false)
-    @Column(precision = 15)
+    @Column(precision = 15, nullable = false)
     private BigDecimal total;
 
     private LocalDateTime createdOn;

@@ -2,9 +2,6 @@ package com.nashtech.ecommercespring.model;
 
 import com.nashtech.ecommercespring.enums.Role;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,22 +18,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Email
-    @Column(unique = true)
+    @Column(unique = true, nullable = false, length = 100)
     private String email;
 
-    @Size(min = 5, max = 60)
-    @Column(length = 60)
+    @Column(length = 60, nullable = false)
     private String password;
 
-    @NotBlank
-    @Size(max = 50)
-    @Column(length = 50)
+    @Column(length = 50, nullable = false)
     private String firstName;
 
-    @NotBlank
-    @Size(max = 50)
-    @Column(length = 50)
+    @Column(length = 50, nullable = false)
     private String lastName;
 
     @Enumerated(EnumType.STRING)
