@@ -59,7 +59,8 @@ public class SecurityConfig {
                             "/api/users/{id}"
                     ).permitAll();
                     authorize.requestMatchers(
-                            "/api/users/**"
+                            "/api/users/**",
+                            "/api/categories/**"
                     ).hasRole("ADMIN");
                     authorize.anyRequest().authenticated();
                 }).httpBasic(Customizer.withDefaults());
