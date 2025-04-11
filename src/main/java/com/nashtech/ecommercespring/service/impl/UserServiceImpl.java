@@ -43,15 +43,16 @@ public class UserServiceImpl implements UserService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String token = jwtTokenProvider.generateToken(authentication);
-
-        return token;
+        return jwtTokenProvider.generateToken(authentication);
     }
 
     @Override
-    public UserSignUpDTO signUp(UserSignUpDTO userSignUpDTO) {
+    public UserDTO signUp(UserSignUpDTO userSignUpDTO) {
         if (userRepository.findByEmail(userSignUpDTO.getEmail()).isPresent()) {
             throw new BadRequestException("Email already exists");
+        }
+        if (userRepository.findByPhone(userSignUpDTO.getPhone()).isPresent()) {
+            throw new BadRequestException("Phone already exists");
         }
 
         User user = new User();
@@ -63,7 +64,7 @@ public class UserServiceImpl implements UserService {
         user.setAddress(userSignUpDTO.getAddress());
         user.setRole(Role.ROLE_USER);
 
-        return new UserSignUpDTO(userRepository.save(user));
+        return new UserDTO(userRepository.save(user));
 
     }
 
@@ -72,14 +73,24 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
             throw new BadRequestException("Email already exists");
         }
+        if (userDTO.getPhone() != null
+                && userRepository.findByPhone(userDTO.getPhone()).isPresent()) {
+            throw new BadRequestException("Phone already exists");
+        }
 
         User user = new User();
         user.setEmail(userDTO.getEmail());
         user.setPassword(encoder.encode(userDTO.getPassword()));
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
-        user.setPhone(userDTO.getPhone());
-        user.setAddress(userDTO.getAddress());
+
+        if (userDTO.getPhone() != null) {
+            user.setPhone(userDTO.getPhone());
+        }
+        if (userDTO.getAddress() != null) {
+            user.setAddress(userDTO.getAddress());
+        }
+
         user.setRole(userDTO.getRole());
 
         return new UserDTO(userRepository.save(user));
@@ -92,6 +103,14 @@ public class UserServiceImpl implements UserService {
                 .stream()
                 .map(UserDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDTO getUserById(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+
+        return new UserDTO(user);
     }
 
     @Override

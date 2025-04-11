@@ -55,7 +55,8 @@ public class SecurityConfig {
                     authorize.requestMatchers(HttpMethod.GET,
                             "/v3/api-docs/**",
                             "/swagger-ui.html",
-                            "/swagger-ui/**"
+                            "/swagger-ui/**",
+                            "/api/users/{id}"
                     ).permitAll();
                     authorize.requestMatchers(
                             "/api/users/**"

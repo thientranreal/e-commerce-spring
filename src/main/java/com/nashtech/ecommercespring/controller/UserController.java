@@ -37,7 +37,7 @@ public class UserController {
 
     @PostMapping("/signup")
     @Operation(summary = "Sign up for user")
-    public ResponseEntity<UserSignUpDTO> signUp(@RequestBody @Valid UserSignUpDTO userSignUpDTO) {
+    public ResponseEntity<UserDTO> signUp(@RequestBody @Valid UserSignUpDTO userSignUpDTO) {
         return ResponseEntity.ok(userService.signUp(userSignUpDTO));
     }
 
@@ -51,6 +51,12 @@ public class UserController {
     @Operation(summary = "Get all users")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get user by ID")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable UUID id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PutMapping("/{id}")
