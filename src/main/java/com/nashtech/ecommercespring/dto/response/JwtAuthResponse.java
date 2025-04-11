@@ -1,4 +1,4 @@
-package com.nashtech.ecommercespring.dto;
+package com.nashtech.ecommercespring.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

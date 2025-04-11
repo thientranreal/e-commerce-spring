@@ -1,22 +1,15 @@
-package com.nashtech.ecommercespring.dto;
+package com.nashtech.ecommercespring.dto.request;
 
 import com.nashtech.ecommercespring.enums.Role;
-import com.nashtech.ecommercespring.model.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.UUID;
 
 @Getter
 @Setter
-@NoArgsConstructor
-public class UserDTO {
-    private UUID id;
-
+public class UserCreateDTO {
     @Email
     private String email;
 
@@ -39,15 +32,4 @@ public class UserDTO {
     private String address;
 
     private Role role;
-
-    public UserDTO(User user) {
-        this.id = user.getId();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        this.phone = user.getPhone();
-        this.address = user.getAddress();
-        this.role = user.getRole();
-    }
 }

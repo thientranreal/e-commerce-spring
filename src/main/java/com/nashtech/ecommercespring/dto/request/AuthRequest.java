@@ -1,4 +1,4 @@
-package com.nashtech.ecommercespring.dto;
+package com.nashtech.ecommercespring.dto.request;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;

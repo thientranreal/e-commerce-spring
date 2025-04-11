@@ -1,11 +1,14 @@
 package com.nashtech.ecommercespring.service.impl;
 
-import com.nashtech.ecommercespring.dto.AuthRequest;
-import com.nashtech.ecommercespring.dto.UserDTO;
-import com.nashtech.ecommercespring.dto.UserSignUpDTO;
+import com.nashtech.ecommercespring.dto.request.AuthRequest;
+import com.nashtech.ecommercespring.dto.request.UserCreateDTO;
+import com.nashtech.ecommercespring.dto.request.UserUpdateDTO;
+import com.nashtech.ecommercespring.dto.response.UserDTO;
+import com.nashtech.ecommercespring.dto.request.UserSignUpDTO;
 import com.nashtech.ecommercespring.enums.Role;
 import com.nashtech.ecommercespring.exception.BadRequestException;
 import com.nashtech.ecommercespring.exception.NotFoundException;
+import com.nashtech.ecommercespring.mapper.UserMapper;
 import com.nashtech.ecommercespring.model.User;
 import com.nashtech.ecommercespring.repository.UserRepository;
 import com.nashtech.ecommercespring.security.JwtTokenProvider;
@@ -27,6 +30,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
+    private final UserMapper userMapper;
 
     private final PasswordEncoder encoder;
 
@@ -55,45 +60,28 @@ public class UserServiceImpl implements UserService {
             throw new BadRequestException("Phone already exists");
         }
 
-        User user = new User();
-        user.setEmail(userSignUpDTO.getEmail());
+        User user = userMapper.toEntity(userSignUpDTO);
         user.setPassword(encoder.encode(userSignUpDTO.getPassword()));
-        user.setFirstName(userSignUpDTO.getFirstName());
-        user.setLastName(userSignUpDTO.getLastName());
-        user.setPhone(userSignUpDTO.getPhone());
-        user.setAddress(userSignUpDTO.getAddress());
         user.setRole(Role.ROLE_USER);
 
-        return new UserDTO(userRepository.save(user));
+        return userMapper.toDto(userRepository.save(user));
 
     }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
-        if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
+    public UserDTO createUser(UserCreateDTO userCreateDTO) {
+        if (userRepository.findByEmail(userCreateDTO.getEmail()).isPresent()) {
             throw new BadRequestException("Email already exists");
         }
-        if (userDTO.getPhone() != null
-                && userRepository.findByPhone(userDTO.getPhone()).isPresent()) {
+        if (userCreateDTO.getPhone() != null
+                && userRepository.findByPhone(userCreateDTO.getPhone()).isPresent()) {
             throw new BadRequestException("Phone already exists");
         }
 
-        User user = new User();
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(encoder.encode(userDTO.getPassword()));
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
+        User user = userMapper.toEntity(userCreateDTO);
+        user.setPassword(encoder.encode(userCreateDTO.getPassword()));
 
-        if (userDTO.getPhone() != null) {
-            user.setPhone(userDTO.getPhone());
-        }
-        if (userDTO.getAddress() != null) {
-            user.setAddress(userDTO.getAddress());
-        }
-
-        user.setRole(userDTO.getRole());
-
-        return new UserDTO(userRepository.save(user));
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
@@ -101,7 +89,7 @@ public class UserServiceImpl implements UserService {
         return userRepository
                 .findAll()
                 .stream()
-                .map(UserDTO::new)
+                .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -110,27 +98,17 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
 
-        return new UserDTO(user);
+        return userMapper.toDto(user);
     }
 
     @Override
-    public UserDTO updateUser(UUID id, UserDTO userDTO) {
+    public UserDTO updateUser(UUID id, UserUpdateDTO userUpdateDTO) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
 
-        user.setEmail(userDTO.getEmail());
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setPhone(userDTO.getPhone());
-        user.setAddress(userDTO.getAddress());
+        userMapper.updateUserFromDto(userUpdateDTO, user);
 
-        if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
-            user.setPassword(encoder.encode(userDTO.getPassword()));
-        }
-
-        user.setRole(userDTO.getRole());
-
-        return new UserDTO(userRepository.save(user));
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override

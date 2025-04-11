@@ -1,9 +1,11 @@
 package com.nashtech.ecommercespring.controller;
 
-import com.nashtech.ecommercespring.dto.AuthRequest;
-import com.nashtech.ecommercespring.dto.JwtAuthResponse;
-import com.nashtech.ecommercespring.dto.UserDTO;
-import com.nashtech.ecommercespring.dto.UserSignUpDTO;
+import com.nashtech.ecommercespring.dto.request.AuthRequest;
+import com.nashtech.ecommercespring.dto.request.UserCreateDTO;
+import com.nashtech.ecommercespring.dto.request.UserUpdateDTO;
+import com.nashtech.ecommercespring.dto.response.JwtAuthResponse;
+import com.nashtech.ecommercespring.dto.response.UserDTO;
+import com.nashtech.ecommercespring.dto.request.UserSignUpDTO;
 import com.nashtech.ecommercespring.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,8 +45,8 @@ public class UserController {
 
     @PostMapping
     @Operation(summary = "Create a new user")
-    public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO userDTO) {
-        return ResponseEntity.ok(userService.createUser(userDTO));
+    public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserCreateDTO userCreateDTO) {
+        return ResponseEntity.ok(userService.createUser(userCreateDTO));
     }
 
     @GetMapping
@@ -63,9 +65,9 @@ public class UserController {
     @Operation(summary = "Update user")
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable UUID id,
-            @RequestBody @Valid UserDTO userDTO
+            @RequestBody @Valid UserUpdateDTO userUpdateDTO
     ) {
-        UserDTO updatedUser = userService.updateUser(id, userDTO);
+        UserDTO updatedUser = userService.updateUser(id, userUpdateDTO);
         return ResponseEntity.ok(updatedUser);
     }
 
