@@ -1,6 +1,6 @@
 package com.nashtech.ecommercespring.dto.response;
 
-import com.nashtech.ecommercespring.enums.Role;
+import com.nashtech.ecommercespring.enums.RoleName;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,5 +23,5 @@ public class UserDTO {
 
     private String address;
 
-    private Role role;
+    private RoleName roleName;
 }

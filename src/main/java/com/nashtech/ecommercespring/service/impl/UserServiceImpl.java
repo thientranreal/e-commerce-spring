@@ -5,7 +5,7 @@ import com.nashtech.ecommercespring.dto.request.UserCreateDTO;
 import com.nashtech.ecommercespring.dto.request.UserUpdateDTO;
 import com.nashtech.ecommercespring.dto.response.UserDTO;
 import com.nashtech.ecommercespring.dto.request.UserSignUpDTO;
-import com.nashtech.ecommercespring.enums.Role;
+import com.nashtech.ecommercespring.enums.RoleName;
 import com.nashtech.ecommercespring.exception.BadRequestException;
 import com.nashtech.ecommercespring.exception.NotFoundException;
 import com.nashtech.ecommercespring.mapper.UserMapper;
@@ -62,7 +62,6 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.toEntity(userSignUpDTO);
         user.setPassword(encoder.encode(userSignUpDTO.getPassword()));
-        user.setRole(Role.ROLE_USER);
 
         return userMapper.toDto(userRepository.save(user));
 

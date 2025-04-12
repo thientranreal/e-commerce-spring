@@ -1,6 +1,6 @@
 package com.nashtech.ecommercespring.dto.request;
 
-import com.nashtech.ecommercespring.enums.Role;
+import com.nashtech.ecommercespring.enums.RoleName;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -31,5 +31,5 @@ public class UserCreateDTO {
     @Size(max = 255)
     private String address;
 
-    private Role role;
+    private RoleName roleName;
 }
