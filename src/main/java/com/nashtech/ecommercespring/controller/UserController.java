@@ -6,6 +6,7 @@ import com.nashtech.ecommercespring.dto.request.UserUpdateDTO;
 import com.nashtech.ecommercespring.dto.response.JwtAuthResponse;
 import com.nashtech.ecommercespring.dto.response.UserDTO;
 import com.nashtech.ecommercespring.dto.request.UserSignUpDTO;
+import com.nashtech.ecommercespring.dto.response.UserSignUpResDTO;
 import com.nashtech.ecommercespring.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,7 +40,7 @@ public class UserController {
 
     @PostMapping("/signup")
     @Operation(summary = "Sign up for user")
-    public ResponseEntity<UserDTO> signUp(@RequestBody @Valid UserSignUpDTO userSignUpDTO) {
+    public ResponseEntity<UserSignUpResDTO> signUp(@RequestBody @Valid UserSignUpDTO userSignUpDTO) {
         return ResponseEntity.ok(userService.signUp(userSignUpDTO));
     }
 
