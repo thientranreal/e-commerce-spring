@@ -1,12 +1,12 @@
 package com.nashtech.ecommercespring.model;
 
-import com.nashtech.ecommercespring.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -24,23 +24,16 @@ public class User {
     @Column(length = 60, nullable = false)
     private String password;
 
-    @Column(length = 50, nullable = false)
-    private String firstName;
-
-    @Column(length = 50, nullable = false)
-    private String lastName;
-
-    @Column(length = 15, unique = true)
-    private String phone;
-
-    private String address;
-
-    @Column(length = 10, nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     private LocalDateTime createdOn;
     private LocalDateTime lastUpdatedOn;
+    private boolean isDeleted;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
+    )
+    private Set<Role> roles;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Rating> ratings;
@@ -50,6 +43,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Order> orders;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<UserInfo> userInfos;
 
     @PrePersist
     protected void onCreate() {

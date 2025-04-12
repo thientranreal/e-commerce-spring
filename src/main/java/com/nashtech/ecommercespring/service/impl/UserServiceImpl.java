@@ -5,7 +5,6 @@ import com.nashtech.ecommercespring.dto.request.UserCreateDTO;
 import com.nashtech.ecommercespring.dto.request.UserUpdateDTO;
 import com.nashtech.ecommercespring.dto.response.UserDTO;
 import com.nashtech.ecommercespring.dto.request.UserSignUpDTO;
-import com.nashtech.ecommercespring.enums.RoleName;
 import com.nashtech.ecommercespring.exception.BadRequestException;
 import com.nashtech.ecommercespring.exception.NotFoundException;
 import com.nashtech.ecommercespring.mapper.UserMapper;
@@ -56,9 +55,9 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(userSignUpDTO.getEmail()).isPresent()) {
             throw new BadRequestException("Email already exists");
         }
-        if (userRepository.findByPhone(userSignUpDTO.getPhone()).isPresent()) {
-            throw new BadRequestException("Phone already exists");
-        }
+//        if (userRepository.findByPhone(userSignUpDTO.getPhone()).isPresent()) {
+//            throw new BadRequestException("Phone already exists");
+//        }
 
         User user = userMapper.toEntity(userSignUpDTO);
         user.setPassword(encoder.encode(userSignUpDTO.getPassword()));
@@ -71,10 +70,6 @@ public class UserServiceImpl implements UserService {
     public UserDTO createUser(UserCreateDTO userCreateDTO) {
         if (userRepository.findByEmail(userCreateDTO.getEmail()).isPresent()) {
             throw new BadRequestException("Email already exists");
-        }
-        if (userCreateDTO.getPhone() != null
-                && userRepository.findByPhone(userCreateDTO.getPhone()).isPresent()) {
-            throw new BadRequestException("Phone already exists");
         }
 
         User user = userMapper.toEntity(userCreateDTO);

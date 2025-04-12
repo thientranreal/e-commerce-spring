@@ -31,6 +31,7 @@ public class Product {
 
     private LocalDateTime createdOn;
     private LocalDateTime lastUpdatedOn;
+    private boolean isDeleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
