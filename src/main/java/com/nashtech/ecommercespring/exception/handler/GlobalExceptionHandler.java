@@ -1,5 +1,7 @@
-package com.nashtech.ecommercespring.exception;
+package com.nashtech.ecommercespring.exception.handler;
 
+import com.nashtech.ecommercespring.exception.BadRequestException;
+import com.nashtech.ecommercespring.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
