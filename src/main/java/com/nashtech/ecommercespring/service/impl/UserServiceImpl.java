@@ -151,11 +151,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO deleteUser(UUID id) {
+    public void deleteUser(UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
 
         user.setDeleted(true);
-        return userMapper.toDto(userRepository.save(user));
+        userRepository.save(user);
     }
 }

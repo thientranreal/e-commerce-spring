@@ -61,12 +61,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO deleteCategory(UUID id) {
+    public void deleteCategory(UUID id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Category with id " + id + " not found"));
 
         categoryRepository.delete(category);
-
-        return categoryMapper.toDto(category);
     }
 }
