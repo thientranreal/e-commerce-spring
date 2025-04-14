@@ -1,5 +1,6 @@
 package com.nashtech.ecommercespring.config;
 
+import com.nashtech.ecommercespring.enums.RoleName;
 import com.nashtech.ecommercespring.security.JwtAuthenticationEntryPoint;
 import com.nashtech.ecommercespring.security.JwtAuthenticationFilter;
 import io.swagger.v3.oas.models.Components;
@@ -61,7 +62,7 @@ public class SecurityConfig {
                     authorize.requestMatchers(
                             "/api/users/**",
                             "/api/categories/**"
-                    ).hasRole("ADMIN");
+                    ).hasAuthority(RoleName.ROLE_ADMIN.name());
                     authorize.anyRequest().authenticated();
                 }).httpBasic(Customizer.withDefaults());
 
