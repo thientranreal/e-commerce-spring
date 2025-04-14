@@ -3,6 +3,7 @@ package com.nashtech.ecommercespring.config;
 import com.nashtech.ecommercespring.enums.RoleName;
 import com.nashtech.ecommercespring.security.JwtAuthenticationEntryPoint;
 import com.nashtech.ecommercespring.security.JwtAuthenticationFilter;
+import com.nashtech.ecommercespring.security.SecurityConstants;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -49,20 +50,11 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> {
-                    authorize.requestMatchers(HttpMethod.POST,
-                            "/api/users/signup",
-                            "/api/users/login"
-                    ).permitAll();
-                    authorize.requestMatchers(HttpMethod.GET,
-                            "/v3/api-docs/**",
-                            "/swagger-ui.html",
-                            "/swagger-ui/**",
-                            "/api/users/{id}"
-                    ).permitAll();
-                    authorize.requestMatchers(
-                            "/api/users/**",
-                            "/api/categories/**"
-                    ).hasAuthority(RoleName.ROLE_ADMIN.name());
+                    authorize.requestMatchers(SecurityConstants.ADMIN_API)
+                            .hasAuthority(RoleName.ROLE_ADMIN.name());
+
+                    authorize.requestMatchers(SecurityConstants.PUBLIC_API).permitAll();
+
                     authorize.anyRequest().authenticated();
                 }).httpBasic(Customizer.withDefaults());
 
