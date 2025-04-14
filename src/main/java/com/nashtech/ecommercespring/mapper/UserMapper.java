@@ -1,8 +1,7 @@
 package com.nashtech.ecommercespring.mapper;
 
-import com.nashtech.ecommercespring.dto.request.UserCreateDTO;
+import com.nashtech.ecommercespring.dto.request.UserReqDTO;
 import com.nashtech.ecommercespring.dto.request.UserSignUpDTO;
-import com.nashtech.ecommercespring.dto.request.UserUpdateDTO;
 import com.nashtech.ecommercespring.dto.response.UserDTO;
 import com.nashtech.ecommercespring.dto.response.UserSignUpResDTO;
 import com.nashtech.ecommercespring.model.User;
@@ -15,9 +14,9 @@ public interface UserMapper {
 
     UserSignUpResDTO toDtoForSignUp(User entity);
 
-    User toEntity(UserCreateDTO dto);
+    User toEntity(UserReqDTO dto);
 
     User toEntity(UserSignUpDTO dto);
 
-    void updateUserFromDto(UserUpdateDTO dto, @MappingTarget User user);
+    void updateUserFromDto(UserReqDTO dto, @MappingTarget User user);
 }

@@ -1,7 +1,6 @@
 package com.nashtech.ecommercespring.controller.admin;
 
-import com.nashtech.ecommercespring.dto.request.CategoryCreateDTO;
-import com.nashtech.ecommercespring.dto.request.CategoryUpdateDTO;
+import com.nashtech.ecommercespring.dto.request.CategoryReqDTO;
 import com.nashtech.ecommercespring.dto.response.CategoryDTO;
 import com.nashtech.ecommercespring.response.ApiResponse;
 import com.nashtech.ecommercespring.service.CategoryService;
@@ -24,7 +23,7 @@ public class AdminCategoryController {
 
     @PostMapping
     @Operation(summary = "Create a new category")
-    public ResponseEntity<ApiResponse<CategoryDTO>> create(@RequestBody CategoryCreateDTO dto) {
+    public ResponseEntity<ApiResponse<CategoryDTO>> create(@RequestBody CategoryReqDTO dto) {
         ApiResponse<CategoryDTO> response = ApiResponse.<CategoryDTO>builder()
                 .success(true)
                 .message("Create a new category successfully")
@@ -62,8 +61,8 @@ public class AdminCategoryController {
     @Operation(summary = "Update category")
     public ResponseEntity<ApiResponse<CategoryDTO>> updateCategory(
             @PathVariable UUID id,
-            @RequestBody @Valid CategoryUpdateDTO categoryUpdateDTO) {
-        CategoryDTO updatedCategory = categoryService.updateCategory(id, categoryUpdateDTO);
+            @RequestBody @Valid CategoryReqDTO reqDTO) {
+        CategoryDTO updatedCategory = categoryService.updateCategory(id, reqDTO);
 
         ApiResponse<CategoryDTO> response = ApiResponse.<CategoryDTO>builder()
                 .success(true)

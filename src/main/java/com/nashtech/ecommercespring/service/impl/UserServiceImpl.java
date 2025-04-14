@@ -1,8 +1,7 @@
 package com.nashtech.ecommercespring.service.impl;
 
 import com.nashtech.ecommercespring.dto.request.AuthRequest;
-import com.nashtech.ecommercespring.dto.request.UserCreateDTO;
-import com.nashtech.ecommercespring.dto.request.UserUpdateDTO;
+import com.nashtech.ecommercespring.dto.request.UserReqDTO;
 import com.nashtech.ecommercespring.dto.response.JwtAuthResponse;
 import com.nashtech.ecommercespring.dto.response.UserDTO;
 import com.nashtech.ecommercespring.dto.request.UserSignUpDTO;
@@ -93,7 +92,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO createUser(UserCreateDTO userCreateDTO) {
+    public UserDTO createUser(UserReqDTO userCreateDTO) {
         if (userRepository.findByEmail(userCreateDTO.getEmail()).isPresent()) {
             throw new BadRequestException("Email already exists");
         }
@@ -129,20 +128,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUser(UUID id, UserUpdateDTO userUpdateDTO) {
+    public UserDTO updateUser(UUID id, UserReqDTO userReqDTO) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
 
 //        Check if role exist and get corresponding roles
-        Set<Role> roles = userUpdateDTO.getRoleIds().stream()
+        Set<Role> roles = userReqDTO.getRoleIds().stream()
                 .map(roleId -> roleRepository.findById(roleId)
                         .orElseThrow(() -> new NotFoundException("Role not found with id: " + roleId)))
                 .collect(Collectors.toSet());
 
-        userMapper.updateUserFromDto(userUpdateDTO, user);
+        userMapper.updateUserFromDto(userReqDTO, user);
 
         //        Update encoded password
-        user.setPassword(encoder.encode(userUpdateDTO.getPassword()));
+        user.setPassword(encoder.encode(userReqDTO.getPassword()));
 
 //        Update role
         user.setRoles(roles);

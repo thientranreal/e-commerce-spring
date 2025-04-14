@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class UserCreateDTO {
+public class UserReqDTO {
     @Email
     private String email;
 

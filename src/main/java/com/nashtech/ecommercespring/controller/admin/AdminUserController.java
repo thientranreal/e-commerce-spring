@@ -1,7 +1,6 @@
 package com.nashtech.ecommercespring.controller.admin;
 
-import com.nashtech.ecommercespring.dto.request.UserCreateDTO;
-import com.nashtech.ecommercespring.dto.request.UserUpdateDTO;
+import com.nashtech.ecommercespring.dto.request.UserReqDTO;
 import com.nashtech.ecommercespring.dto.response.UserDTO;
 import com.nashtech.ecommercespring.response.ApiResponse;
 import com.nashtech.ecommercespring.service.UserService;
@@ -25,7 +24,7 @@ public class AdminUserController {
 
     @PostMapping
     @Operation(summary = "Create a new user")
-    public ResponseEntity<ApiResponse<UserDTO>> createUser(@RequestBody @Valid UserCreateDTO userCreateDTO) {
+    public ResponseEntity<ApiResponse<UserDTO>> createUser(@RequestBody @Valid UserReqDTO userCreateDTO) {
         ApiResponse<UserDTO> response = ApiResponse.<UserDTO>builder()
                 .success(true)
                 .message("Create a new user successfully")
@@ -63,12 +62,12 @@ public class AdminUserController {
     @Operation(summary = "Update user")
     public ResponseEntity<ApiResponse<UserDTO>> updateUser(
             @PathVariable UUID id,
-            @RequestBody @Valid UserUpdateDTO userUpdateDTO
+            @RequestBody @Valid UserReqDTO userReqDTO
     ) {
         ApiResponse<UserDTO> response = ApiResponse.<UserDTO>builder()
                 .success(true)
                 .message("Update user successfully")
-                .data(userService.updateUser(id, userUpdateDTO))
+                .data(userService.updateUser(id, userReqDTO))
                 .build();
 
         return ResponseEntity.ok(response);

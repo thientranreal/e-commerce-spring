@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CategoryUpdateDTO {
+public class CategoryReqDTO {
     @NotBlank
     @Size(max = 100)
     private String name;

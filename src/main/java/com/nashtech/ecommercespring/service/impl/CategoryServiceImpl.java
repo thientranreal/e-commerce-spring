@@ -1,7 +1,6 @@
 package com.nashtech.ecommercespring.service.impl;
 
-import com.nashtech.ecommercespring.dto.request.CategoryCreateDTO;
-import com.nashtech.ecommercespring.dto.request.CategoryUpdateDTO;
+import com.nashtech.ecommercespring.dto.request.CategoryReqDTO;
 import com.nashtech.ecommercespring.dto.response.CategoryDTO;
 import com.nashtech.ecommercespring.exception.BadRequestException;
 import com.nashtech.ecommercespring.exception.NotFoundException;
@@ -23,7 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
 
     @Override
-    public CategoryDTO createCategory(CategoryCreateDTO categoryDTO) {
+    public CategoryDTO createCategory(CategoryReqDTO categoryDTO) {
         if (categoryRepository.findByName(categoryDTO.getName()).isPresent()) {
             throw new BadRequestException("Category with name " + categoryDTO.getName() + " already exists");
         }
@@ -51,11 +50,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO updateCategory(UUID id, CategoryUpdateDTO categoryUpdateDTO) {
+    public CategoryDTO updateCategory(UUID id, CategoryReqDTO categoryDTO) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Category with id " + id + " not found"));
 
-        categoryMapper.updateCategoryFromDto(categoryUpdateDTO, category);
+        categoryMapper.updateCategoryFromDto(categoryDTO, category);
 
         return categoryMapper.toDto(categoryRepository.save(category));
     }
