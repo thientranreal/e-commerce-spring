@@ -1,5 +1,6 @@
 package com.nashtech.ecommercespring.model;
 
+import com.nashtech.ecommercespring.enums.ProductStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +27,13 @@ public class Product {
 
     @Column(precision = 15, nullable = false)
     private BigDecimal price;
+
+    @Column(nullable = false)
+    private int stock;
+
+    @Column(length = 20, nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProductStatus status;
 
     private boolean isFeatured;
 

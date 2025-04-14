@@ -1,5 +1,6 @@
 package com.nashtech.ecommercespring.model;
 
+import com.nashtech.ecommercespring.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,10 @@ public class Order {
 
     @Column(precision = 15, nullable = false)
     private BigDecimal total;
+
+    @Column(length = 15, nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     private LocalDateTime createdOn;
 
