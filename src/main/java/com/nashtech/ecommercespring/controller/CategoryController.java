@@ -50,8 +50,8 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete category")
-    public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) {
-        categoryService.deleteCategory(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable UUID id) {
+        CategoryDTO deletedCategory = categoryService.deleteCategory(id);
+        return ResponseEntity.ok(deletedCategory);
     }
 }
