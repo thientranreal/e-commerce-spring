@@ -3,6 +3,7 @@ package com.nashtech.ecommercespring.service.impl;
 import com.nashtech.ecommercespring.dto.request.AuthRequest;
 import com.nashtech.ecommercespring.dto.request.UserCreateDTO;
 import com.nashtech.ecommercespring.dto.request.UserUpdateDTO;
+import com.nashtech.ecommercespring.dto.response.JwtAuthResponse;
 import com.nashtech.ecommercespring.dto.response.UserDTO;
 import com.nashtech.ecommercespring.dto.request.UserSignUpDTO;
 import com.nashtech.ecommercespring.dto.response.UserSignUpResDTO;
@@ -52,7 +53,7 @@ public class UserServiceImpl implements UserService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    public String login(AuthRequest request) {
+    public JwtAuthResponse login(AuthRequest request) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getEmail(),
                 request.getPassword()
@@ -60,7 +61,11 @@ public class UserServiceImpl implements UserService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return jwtTokenProvider.generateToken(authentication);
+        String token = jwtTokenProvider.generateToken(authentication);
+        JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+
+        return jwtAuthResponse;
     }
 
     @Override

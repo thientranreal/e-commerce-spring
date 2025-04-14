@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,12 +29,7 @@ public class UserController {
     @PostMapping("/login")
     @Operation(summary = "Login into the system")
     public ResponseEntity<JwtAuthResponse> login(@RequestBody @Valid AuthRequest request){
-        String token = userService.login(request);
-
-        JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
-        jwtAuthResponse.setAccessToken(token);
-
-        return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
+        return ResponseEntity.ok(userService.login(request));
     }
 
     @PostMapping("/signup")
