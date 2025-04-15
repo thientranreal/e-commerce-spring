@@ -3,6 +3,7 @@ package com.nashtech.ecommercespring.service.impl;
 import com.nashtech.ecommercespring.dto.request.CategoryReqDTO;
 import com.nashtech.ecommercespring.dto.response.CategoryDTO;
 import com.nashtech.ecommercespring.exception.BadRequestException;
+import com.nashtech.ecommercespring.exception.ExceptionMessages;
 import com.nashtech.ecommercespring.exception.NotFoundException;
 import com.nashtech.ecommercespring.mapper.CategoryMapper;
 import com.nashtech.ecommercespring.model.Category;
@@ -24,7 +25,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO createCategory(CategoryReqDTO categoryDTO) {
         if (categoryRepository.findByName(categoryDTO.getName()).isPresent()) {
-            throw new BadRequestException("Category with name " + categoryDTO.getName() + " already exists");
+            throw new BadRequestException(String.format(
+                    ExceptionMessages.CATEGORY_ALREADY_EXISTS, categoryDTO.getName())
+            );
         }
 
         Category category = categoryMapper.toEntity(categoryDTO);
@@ -35,7 +38,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO getCategoryById(UUID id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Category with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(ExceptionMessages.CATEGORY_NOT_FOUND, id))
+                );
 
         return categoryMapper.toDto(category);
     }
@@ -52,7 +57,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO updateCategory(UUID id, CategoryReqDTO categoryDTO) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Category with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(ExceptionMessages.CATEGORY_NOT_FOUND, id))
+                );
 
         categoryMapper.updateCategoryFromDto(categoryDTO, category);
 
@@ -62,7 +69,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(UUID id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Category with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(ExceptionMessages.CATEGORY_NOT_FOUND, id))
+                );
 
         categoryRepository.delete(category);
     }

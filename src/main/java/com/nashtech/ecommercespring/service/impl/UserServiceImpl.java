@@ -8,6 +8,7 @@ import com.nashtech.ecommercespring.dto.request.UserSignUpDTO;
 import com.nashtech.ecommercespring.dto.response.UserSignUpResDTO;
 import com.nashtech.ecommercespring.enums.RoleName;
 import com.nashtech.ecommercespring.exception.BadRequestException;
+import com.nashtech.ecommercespring.exception.ExceptionMessages;
 import com.nashtech.ecommercespring.exception.NotFoundException;
 import com.nashtech.ecommercespring.mapper.UserInfoMapper;
 import com.nashtech.ecommercespring.mapper.UserMapper;
@@ -70,17 +71,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserSignUpResDTO signUp(UserSignUpDTO userSignUpDTO) {
         if (userRepository.findByEmail(userSignUpDTO.getEmail()).isPresent()) {
-            throw new BadRequestException("Email already exists");
+            throw new BadRequestException(ExceptionMessages.EMAIL_ALREADY_EXISTS);
         }
         if (userInfoRepository.findByPhone(userSignUpDTO.getPhone()).isPresent()) {
-            throw new BadRequestException("Phone already exists");
+            throw new BadRequestException(ExceptionMessages.PHONE_ALREADY_EXISTS);
         }
 
         User user = userMapper.toEntity(userSignUpDTO);
         user.setPassword(encoder.encode(userSignUpDTO.getPassword()));
 
         Role role = roleRepository.findByRoleName(RoleName.ROLE_USER)
-                .orElseThrow(() -> new NotFoundException("ROLE_USER not found"));
+                .orElseThrow(() -> new NotFoundException(ExceptionMessages.ROLE_USER_NOT_FOUND));
 
         user.setRoles(Set.of(role));
 
@@ -94,7 +95,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO createUser(UserReqDTO userCreateDTO) {
         if (userRepository.findByEmail(userCreateDTO.getEmail()).isPresent()) {
-            throw new BadRequestException("Email already exists");
+            throw new BadRequestException(ExceptionMessages.EMAIL_ALREADY_EXISTS);
         }
 
         User user = userMapper.toEntity(userCreateDTO);
@@ -102,7 +103,9 @@ public class UserServiceImpl implements UserService {
 //        Set role for the user
         Set<Role> roles = userCreateDTO.getRoleIds().stream()
                 .map(roleId -> roleRepository.findById(roleId)
-                        .orElseThrow(() -> new NotFoundException("Role not found with id: " + roleId)))
+                        .orElseThrow(() -> new NotFoundException(
+                                String.format(ExceptionMessages.ROLE_NOT_FOUND, roleId)))
+                )
                 .collect(Collectors.toSet());
 
         user.setRoles(roles);
@@ -122,7 +125,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO getUserById(UUID id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(ExceptionMessages.USER_NOT_FOUND, id))
+                );
 
         return userMapper.toDto(user);
     }
@@ -130,12 +135,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO updateUser(UUID id, UserReqDTO userReqDTO) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(ExceptionMessages.USER_NOT_FOUND, id))
+                );
 
 //        Check if role exist and get corresponding roles
         Set<Role> roles = userReqDTO.getRoleIds().stream()
                 .map(roleId -> roleRepository.findById(roleId)
-                        .orElseThrow(() -> new NotFoundException("Role not found with id: " + roleId)))
+                        .orElseThrow(() -> new NotFoundException(
+                                String.format(ExceptionMessages.ROLE_NOT_FOUND, roleId)))
+                )
                 .collect(Collectors.toSet());
 
         userMapper.updateUserFromDto(userReqDTO, user);
@@ -152,7 +161,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(UUID id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(ExceptionMessages.USER_NOT_FOUND, id))
+                );
 
         user.setDeleted(true);
         userRepository.save(user);
