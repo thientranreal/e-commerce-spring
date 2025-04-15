@@ -25,7 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException(
-                        String.format(ExceptionMessages.USER_NOT_FOUND_BY_EMAIL, email))
+                        String.format(ExceptionMessages.NOT_FOUND, email))
                 );
 
         Set<GrantedAuthority> authorities = user.getRoles().stream()

@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDTO createCategory(CategoryReqDTO categoryDTO) {
         if (categoryRepository.findByName(categoryDTO.getName()).isPresent()) {
             throw new BadRequestException(String.format(
-                    ExceptionMessages.CATEGORY_ALREADY_EXISTS, categoryDTO.getName())
+                    ExceptionMessages.ALREADY_EXISTS, categoryDTO.getName())
             );
         }
 
@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDTO getCategoryById(UUID id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
-                        String.format(ExceptionMessages.CATEGORY_NOT_FOUND, id))
+                        String.format(ExceptionMessages.NOT_FOUND, id))
                 );
 
         return categoryMapper.toDto(category);
@@ -58,7 +58,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDTO updateCategory(UUID id, CategoryReqDTO categoryDTO) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
-                        String.format(ExceptionMessages.CATEGORY_NOT_FOUND, id))
+                        String.format(ExceptionMessages.NOT_FOUND, id))
                 );
 
         categoryMapper.updateCategoryFromDto(categoryDTO, category);
@@ -70,7 +70,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(UUID id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
-                        String.format(ExceptionMessages.CATEGORY_NOT_FOUND, id))
+                        String.format(ExceptionMessages.NOT_FOUND, id))
                 );
 
         categoryRepository.delete(category);

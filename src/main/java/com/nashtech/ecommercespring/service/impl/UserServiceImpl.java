@@ -71,17 +71,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserSignUpResDTO signUp(UserSignUpDTO userSignUpDTO) {
         if (userRepository.findByEmail(userSignUpDTO.getEmail()).isPresent()) {
-            throw new BadRequestException(ExceptionMessages.EMAIL_ALREADY_EXISTS);
+            throw new BadRequestException(
+                    String.format(ExceptionMessages.ALREADY_EXISTS, userSignUpDTO.getEmail())
+            );
         }
         if (userInfoRepository.findByPhone(userSignUpDTO.getPhone()).isPresent()) {
-            throw new BadRequestException(ExceptionMessages.PHONE_ALREADY_EXISTS);
+            throw new BadRequestException(
+                    String.format(ExceptionMessages.ALREADY_EXISTS, userSignUpDTO.getPhone())
+            );
         }
 
         User user = userMapper.toEntity(userSignUpDTO);
         user.setPassword(encoder.encode(userSignUpDTO.getPassword()));
 
         Role role = roleRepository.findByRoleName(RoleName.ROLE_USER)
-                .orElseThrow(() -> new NotFoundException(ExceptionMessages.ROLE_USER_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(ExceptionMessages.NOT_FOUND, RoleName.ROLE_USER.name()))
+                );
 
         user.setRoles(Set.of(role));
 
@@ -95,7 +101,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO createUser(UserReqDTO userCreateDTO) {
         if (userRepository.findByEmail(userCreateDTO.getEmail()).isPresent()) {
-            throw new BadRequestException(ExceptionMessages.EMAIL_ALREADY_EXISTS);
+            throw new BadRequestException(
+                    String.format(ExceptionMessages.ALREADY_EXISTS, userCreateDTO.getEmail())
+            );
         }
 
         User user = userMapper.toEntity(userCreateDTO);
@@ -104,7 +112,7 @@ public class UserServiceImpl implements UserService {
         Set<Role> roles = userCreateDTO.getRoleIds().stream()
                 .map(roleId -> roleRepository.findById(roleId)
                         .orElseThrow(() -> new NotFoundException(
-                                String.format(ExceptionMessages.ROLE_NOT_FOUND, roleId)))
+                                String.format(ExceptionMessages.NOT_FOUND, roleId)))
                 )
                 .collect(Collectors.toSet());
 
@@ -126,7 +134,7 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUserById(UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
-                        String.format(ExceptionMessages.USER_NOT_FOUND, id))
+                        String.format(ExceptionMessages.NOT_FOUND, id))
                 );
 
         return userMapper.toDto(user);
@@ -136,14 +144,14 @@ public class UserServiceImpl implements UserService {
     public UserDTO updateUser(UUID id, UserReqDTO userReqDTO) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
-                        String.format(ExceptionMessages.USER_NOT_FOUND, id))
+                        String.format(ExceptionMessages.NOT_FOUND, id))
                 );
 
 //        Check if role exist and get corresponding roles
         Set<Role> roles = userReqDTO.getRoleIds().stream()
                 .map(roleId -> roleRepository.findById(roleId)
                         .orElseThrow(() -> new NotFoundException(
-                                String.format(ExceptionMessages.ROLE_NOT_FOUND, roleId)))
+                                String.format(ExceptionMessages.NOT_FOUND, roleId)))
                 )
                 .collect(Collectors.toSet());
 
@@ -162,7 +170,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
-                        String.format(ExceptionMessages.USER_NOT_FOUND, id))
+                        String.format(ExceptionMessages.NOT_FOUND, id))
                 );
 
         user.setDeleted(true);

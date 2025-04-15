@@ -3,6 +3,7 @@ package com.nashtech.ecommercespring.controller.admin;
 import com.nashtech.ecommercespring.dto.request.CategoryReqDTO;
 import com.nashtech.ecommercespring.dto.response.CategoryDTO;
 import com.nashtech.ecommercespring.response.ApiResponse;
+import com.nashtech.ecommercespring.response.SuccessMessages;
 import com.nashtech.ecommercespring.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,10 +24,10 @@ public class AdminCategoryController {
 
     @PostMapping
     @Operation(summary = "Create a new category")
-    public ResponseEntity<ApiResponse<CategoryDTO>> create(@RequestBody CategoryReqDTO dto) {
+    public ResponseEntity<ApiResponse<CategoryDTO>> createCategory(@RequestBody @Valid CategoryReqDTO dto) {
         ApiResponse<CategoryDTO> response = ApiResponse.<CategoryDTO>builder()
                 .success(true)
-                .message("Create a new category successfully")
+                .message(String.format(SuccessMessages.CREATE_SUCCESS, dto.getName()))
                 .data(categoryService.createCategory(dto))
                 .build();
 
@@ -38,7 +39,7 @@ public class AdminCategoryController {
     public ResponseEntity<ApiResponse<List<CategoryDTO>>> getAllCategories() {
         ApiResponse<List<CategoryDTO>> response = ApiResponse.<List<CategoryDTO>>builder()
                 .success(true)
-                .message("Get all categories successfully")
+                .message(String.format(SuccessMessages.GET_ALL_SUCCESS, "categories"))
                 .data(categoryService.getAllCategories())
                 .build();
 
@@ -50,7 +51,7 @@ public class AdminCategoryController {
     public ResponseEntity<ApiResponse<CategoryDTO>> getCategoryById(@PathVariable UUID id) {
         ApiResponse<CategoryDTO> response = ApiResponse.<CategoryDTO>builder()
                 .success(true)
-                .message("Get category by ID successfully")
+                .message(String.format(SuccessMessages.GET_BY_ID_SUCCESS, id))
                 .data(categoryService.getCategoryById(id))
                 .build();
 
@@ -66,7 +67,7 @@ public class AdminCategoryController {
 
         ApiResponse<CategoryDTO> response = ApiResponse.<CategoryDTO>builder()
                 .success(true)
-                .message("Update category successfully")
+                .message(String.format(SuccessMessages.UPDATE_SUCCESS, updatedCategory.getName()))
                 .data(updatedCategory)
                 .build();
 
@@ -80,7 +81,7 @@ public class AdminCategoryController {
 
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .success(true)
-                .message("Delete category successfully")
+                .message(String.format(SuccessMessages.DELETE_SUCCESS, id))
                 .data(null)
                 .build();
 
