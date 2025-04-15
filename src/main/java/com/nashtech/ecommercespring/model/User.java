@@ -26,7 +26,7 @@ public class User {
 
     private LocalDateTime createdOn;
     private LocalDateTime lastUpdatedOn;
-    private boolean isDeleted;
+    private boolean deleted;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",

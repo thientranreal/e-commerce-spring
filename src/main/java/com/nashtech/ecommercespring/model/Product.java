@@ -39,7 +39,7 @@ public class Product {
 
     private LocalDateTime createdOn;
     private LocalDateTime lastUpdatedOn;
-    private boolean isDeleted;
+    private boolean deleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
