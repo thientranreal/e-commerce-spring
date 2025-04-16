@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -29,30 +28,6 @@ public class AdminCategoryController {
                 .success(true)
                 .message(String.format(SuccessMessages.CREATE_SUCCESS, dto.getName()))
                 .data(categoryService.createCategory(dto))
-                .build();
-
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping
-    @Operation(summary = "Get all categories")
-    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getAllCategories() {
-        ApiResponse<List<CategoryDTO>> response = ApiResponse.<List<CategoryDTO>>builder()
-                .success(true)
-                .message(String.format(SuccessMessages.GET_ALL_SUCCESS, "categories"))
-                .data(categoryService.getAllCategories())
-                .build();
-
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/{id}")
-    @Operation(summary = "Get category by ID")
-    public ResponseEntity<ApiResponse<CategoryDTO>> getCategoryById(@PathVariable UUID id) {
-        ApiResponse<CategoryDTO> response = ApiResponse.<CategoryDTO>builder()
-                .success(true)
-                .message(String.format(SuccessMessages.GET_BY_ID_SUCCESS, id))
-                .data(categoryService.getCategoryById(id))
                 .build();
 
         return ResponseEntity.ok(response);
