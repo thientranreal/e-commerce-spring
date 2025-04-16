@@ -11,4 +11,5 @@ import java.util.UUID;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, UUID> {
     Page<Product> findByDeletedFalse(Pageable pageable);
+    Page<Product> findByCategoryIdAndDeletedFalse(UUID categoryId, Pageable pageable);
 }

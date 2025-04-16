@@ -12,17 +12,15 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClient;
 
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/users")
-@Tag(name = "User", description = "User management APIs")
+@Tag(name = "User", description = "User APIs")
 public class UserController {
 
     private final UserService userService;
-    private final RestClient.Builder builder;
 
     @PostMapping("/login")
     @Operation(summary = "Login into the system")

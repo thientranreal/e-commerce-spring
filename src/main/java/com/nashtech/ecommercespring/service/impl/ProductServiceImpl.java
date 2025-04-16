@@ -56,6 +56,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Page<ProductDTO> getProductsByCategory(UUID categoryId, Pageable pageable) {
+        return productRepository.findByCategoryIdAndDeletedFalse(categoryId, pageable)
+                .map(productMapper::toDto);
+    }
+
+    @Override
     public ProductDTO updateProduct(UUID id, ProductReqDTO productDTO) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
