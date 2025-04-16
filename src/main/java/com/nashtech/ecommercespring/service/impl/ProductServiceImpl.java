@@ -5,7 +5,9 @@ import com.nashtech.ecommercespring.dto.response.ProductDTO;
 import com.nashtech.ecommercespring.exception.ExceptionMessages;
 import com.nashtech.ecommercespring.exception.NotFoundException;
 import com.nashtech.ecommercespring.mapper.ProductMapper;
+import com.nashtech.ecommercespring.model.Category;
 import com.nashtech.ecommercespring.model.Product;
+import com.nashtech.ecommercespring.repository.CategoryRepository;
 import com.nashtech.ecommercespring.repository.ProductRepository;
 import com.nashtech.ecommercespring.service.ProductService;
 import lombok.AllArgsConstructor;
@@ -20,11 +22,20 @@ import java.util.UUID;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
+    private final CategoryRepository categoryRepository;
+
     private final ProductMapper productMapper;
 
     @Override
     public ProductDTO createProduct(ProductReqDTO productDTO) {
+        Category category =  categoryRepository
+                .findById(productDTO.getCategoryId())
+                .orElseThrow(() -> new NotFoundException(String
+                        .format(ExceptionMessages.NOT_FOUND, productDTO.getCategoryId()))
+                );
+
         Product product = productMapper.toEntity(productDTO);
+        product.setCategory(category);
         return productMapper.toDto(productRepository.save(product));
     }
 
@@ -51,7 +62,14 @@ public class ProductServiceImpl implements ProductService {
                         String.format(ExceptionMessages.NOT_FOUND, id))
                 );
 
+        Category category =  categoryRepository
+                .findById(productDTO.getCategoryId())
+                .orElseThrow(() -> new NotFoundException(String
+                        .format(ExceptionMessages.NOT_FOUND, productDTO.getCategoryId()))
+                );
+
         productMapper.updateProductFromDto(productDTO, product);
+        product.setCategory(category);
         return productMapper.toDto(productRepository.save(product));
     }
 
