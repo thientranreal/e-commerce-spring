@@ -35,7 +35,7 @@ public class ProductController {
     @GetMapping
     @Operation(summary = "Get all products with pagination")
     public ResponseEntity<ApiResponse<Page<ProductDTO>>> getAllProducts(
-            @PageableDefault(size = 10, sort = "name") Pageable pageable
+            @PageableDefault(sort = "name") Pageable pageable
     ) {
         ApiResponse<Page<ProductDTO>> response = ApiResponse.<Page<ProductDTO>>builder()
                 .success(true)
@@ -62,7 +62,7 @@ public class ProductController {
     @Operation(summary = "Get product by category")
     public ResponseEntity<ApiResponse<Page<ProductDTO>>> getProductsByCategory(
             @PathVariable UUID categoryId,
-            @PageableDefault(size = 10, sort = "name") Pageable pageable
+            @PageableDefault(sort = "name") Pageable pageable
     ) {
         Page<ProductDTO> products = productService.getProductsByCategory(categoryId, pageable);
 

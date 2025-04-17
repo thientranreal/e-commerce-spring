@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -29,5 +30,9 @@ public class ProductDTO {
     private LocalDateTime lastUpdatedOn;
     private boolean isDeleted;
 
-    private UUID categoryId;
+    private CategoryDTO category;
+
+    private List<ProductImageDTO> productImages;
+
+    private List<RatingDTO> ratings;
 }
