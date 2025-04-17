@@ -8,10 +8,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -24,7 +27,9 @@ public class AdminUserController {
 
     @PostMapping
     @Operation(summary = "Create a new user")
-    public ResponseEntity<ApiResponse<UserDTO>> createUser(@RequestBody @Valid UserReqDTO userCreateDTO) {
+    public ResponseEntity<ApiResponse<UserDTO>> createUser(
+            @RequestBody @Valid UserReqDTO userCreateDTO
+    ) {
         ApiResponse<UserDTO> response = ApiResponse.<UserDTO>builder()
                 .success(true)
                 .message("Create a new user successfully")
@@ -36,11 +41,13 @@ public class AdminUserController {
 
     @GetMapping
     @Operation(summary = "Get all users")
-    public ResponseEntity<ApiResponse<List<UserDTO>>> getAllUsers() {
-        ApiResponse<List<UserDTO>> response = ApiResponse.<List<UserDTO>>builder()
+    public ResponseEntity<ApiResponse<Page<UserDTO>>> getAllUsers(
+            @PageableDefault(sort = "createdOn", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        ApiResponse<Page<UserDTO>> response = ApiResponse.<Page<UserDTO>>builder()
                 .success(true)
                 .message("Get all users successfully")
-                .data(userService.getAllUsers())
+                .data(userService.getAllUsers(pageable))
                 .build();
 
         return ResponseEntity.ok(response);

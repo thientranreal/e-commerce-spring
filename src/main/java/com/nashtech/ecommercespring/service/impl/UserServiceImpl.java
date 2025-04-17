@@ -20,6 +20,8 @@ import com.nashtech.ecommercespring.repository.UserRepository;
 import com.nashtech.ecommercespring.security.JwtTokenProvider;
 import com.nashtech.ecommercespring.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -122,12 +124,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> getAllUsers() {
+    public Page<UserDTO> getAllUsers(Pageable pageable) {
         return userRepository
-                .findAll()
-                .stream()
-                .map(userMapper::toDto)
-                .collect(Collectors.toList());
+                .findAll(pageable)
+                .map(userMapper::toDto);
     }
 
     @Override
