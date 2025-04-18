@@ -25,10 +25,10 @@ import java.util.UUID;
 public class RatingController {
     private final RatingService ratingService;
 
-    @GetMapping("/product/{productId}")
+    @GetMapping
     @Operation(summary = "Get rating by product Id")
     public ResponseEntity<ApiResponse<Page<RatingDTO>>> getRatingsByProductId(
-            @PathVariable UUID productId,
+            @RequestParam UUID productId,
             @PageableDefault(sort = "createdOn", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         ApiResponse<Page<RatingDTO>> response = ApiResponse.<Page<RatingDTO>>builder()

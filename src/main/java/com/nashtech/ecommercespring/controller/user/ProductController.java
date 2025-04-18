@@ -13,10 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -58,10 +55,10 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/category/{categoryId}")
+    @GetMapping
     @Operation(summary = "Get product by category")
     public ResponseEntity<ApiResponse<Page<ProductDTO>>> getProductsByCategory(
-            @PathVariable UUID categoryId,
+            @RequestParam UUID categoryId,
             @PageableDefault(sort = "name") Pageable pageable
     ) {
         Page<ProductDTO> products = productService.getProductsByCategory(categoryId, pageable);
@@ -77,9 +74,9 @@ public class ProductController {
 
     // ---- Product Image ----
 
-    @GetMapping("/{productId}/images")
+    @GetMapping("/images")
     @Operation(summary = "Get all images for a product")
-    public ResponseEntity<ApiResponse<List<ProductImageDTO>>> getImagesByProductId(@PathVariable UUID productId) {
+    public ResponseEntity<ApiResponse<List<ProductImageDTO>>> getImagesByProductId(@RequestParam UUID productId) {
         List<ProductImageDTO> images = productImageService.getImagesByProductId(productId);
 
         return ResponseEntity.ok(
@@ -91,9 +88,9 @@ public class ProductController {
         );
     }
 
-    @GetMapping("/images/{imageId}")
+    @GetMapping("/images")
     @Operation(summary = "Get product image by ID")
-    public ResponseEntity<ApiResponse<ProductImageDTO>> getImageById(@PathVariable UUID imageId) {
+    public ResponseEntity<ApiResponse<ProductImageDTO>> getImageById(@RequestParam UUID imageId) {
         ProductImageDTO image = productImageService.getImageById(imageId);
 
         return ResponseEntity.ok(
