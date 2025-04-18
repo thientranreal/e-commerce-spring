@@ -3,6 +3,7 @@ package com.nashtech.ecommercespring.controller.admin;
 import com.nashtech.ecommercespring.dto.request.UserReqDTO;
 import com.nashtech.ecommercespring.dto.response.UserDTO;
 import com.nashtech.ecommercespring.response.ApiResponse;
+import com.nashtech.ecommercespring.response.SuccessMessages;
 import com.nashtech.ecommercespring.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,10 +31,12 @@ public class AdminUserController {
     public ResponseEntity<ApiResponse<UserDTO>> createUser(
             @RequestBody @Valid UserReqDTO userCreateDTO
     ) {
+        UserDTO userDTO = userService.createUser(userCreateDTO);
+
         ApiResponse<UserDTO> response = ApiResponse.<UserDTO>builder()
                 .success(true)
-                .message("Create a new user successfully")
-                .data(userService.createUser(userCreateDTO))
+                .message(String.format(SuccessMessages.CREATE_SUCCESS, userDTO.getId()))
+                .data(userDTO)
                 .build();
 
         return ResponseEntity.ok(response);
@@ -46,7 +49,7 @@ public class AdminUserController {
     ) {
         ApiResponse<Page<UserDTO>> response = ApiResponse.<Page<UserDTO>>builder()
                 .success(true)
-                .message("Get all users successfully")
+                .message(String.format(SuccessMessages.GET_ALL_SUCCESS, "users"))
                 .data(userService.getAllUsers(pageable))
                 .build();
 
@@ -58,7 +61,7 @@ public class AdminUserController {
     public ResponseEntity<ApiResponse<UserDTO>> getUserById(@PathVariable UUID id) {
         ApiResponse<UserDTO> response = ApiResponse.<UserDTO>builder()
                 .success(true)
-                .message("Get user by ID successfully")
+                .message(String.format(SuccessMessages.GET_BY_ID_SUCCESS, id))
                 .data(userService.getUserById(id))
                 .build();
 
@@ -73,7 +76,7 @@ public class AdminUserController {
     ) {
         ApiResponse<UserDTO> response = ApiResponse.<UserDTO>builder()
                 .success(true)
-                .message("Update user successfully")
+                .message(String.format(SuccessMessages.UPDATE_SUCCESS, id))
                 .data(userService.updateUser(id, userReqDTO))
                 .build();
 
@@ -87,7 +90,7 @@ public class AdminUserController {
 
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .success(true)
-                .message("Delete user successfully")
+                .message(String.format(SuccessMessages.DELETE_SUCCESS, id))
                 .data(null)
                 .build();
 
