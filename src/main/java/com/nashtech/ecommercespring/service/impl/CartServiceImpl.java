@@ -1,5 +1,6 @@
 package com.nashtech.ecommercespring.service.impl;
 
+import com.nashtech.ecommercespring.dto.request.CartItemReqDTO;
 import com.nashtech.ecommercespring.dto.response.CartDTO;
 import com.nashtech.ecommercespring.exception.ExceptionMessages;
 import com.nashtech.ecommercespring.exception.NotFoundException;
@@ -36,15 +37,15 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDTO addItemToCart(UUID userId, UUID productId) {
-        Product product = productRepository.findById(productId)
+    public CartDTO addItemToCart(CartItemReqDTO reqDTO) {
+        Product product = productRepository.findById(reqDTO.getProductId())
                 .orElseThrow(() -> new NotFoundException(
                         String.format(ExceptionMessages.NOT_FOUND, "Product"))
                 );
 
 //        If a user doesn't have a cart then create it
-        Cart cart = cartRepository.findByUserId(userId).orElseGet(() -> {
-                    User user = userRepository.findById(userId)
+        Cart cart = cartRepository.findByUserId(reqDTO.getUserId()).orElseGet(() -> {
+                    User user = userRepository.findById(reqDTO.getUserId())
                             .orElseThrow(() -> new NotFoundException(String.format(ExceptionMessages.NOT_FOUND, "User")));
                     Cart newCart = new Cart();
                     newCart.setUser(user);
@@ -53,7 +54,7 @@ public class CartServiceImpl implements CartService {
 
 //        Update cartItem by one if it already exists
         CartItem cartItem = cart.getCartItems().stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
+                .filter(item -> item.getProduct().getId().equals(reqDTO.getProductId()))
                 .findFirst()
                 .orElse(null);
 
@@ -72,14 +73,14 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void removeItemFromCart(UUID userId, UUID productId) {
-        Cart cart = cartRepository.findByUserId(userId)
+    public void removeItemFromCart(CartItemReqDTO reqDTO) {
+        Cart cart = cartRepository.findByUserId(reqDTO.getUserId())
                 .orElseThrow(() -> new NotFoundException(
                         String.format(ExceptionMessages.NOT_FOUND, "Cart"))
                 );
 
         boolean removed = cart.getCartItems()
-                .removeIf(item -> item.getProduct().getId().equals(productId));
+                .removeIf(item -> item.getProduct().getId().equals(reqDTO.getProductId()));
 
         if (!removed) {
             throw new NotFoundException(String.format(ExceptionMessages.NOT_FOUND, "Product"));
@@ -99,23 +100,23 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDTO updateQuantity(UUID userId, UUID productId, int quantity) {
-        if (quantity <= 0) {
-            removeItemFromCart(userId, productId);
-            return getCart(userId);
+    public CartDTO updateQuantity(CartItemReqDTO reqDTO) {
+        if (reqDTO.getQuantity() <= 0) {
+            removeItemFromCart(reqDTO);
+            return getCart(reqDTO.getUserId());
         }
 
-        Cart cart = cartRepository.findByUserId(userId)
+        Cart cart = cartRepository.findByUserId(reqDTO.getUserId())
                 .orElseThrow(() -> new NotFoundException(
                         String.format(ExceptionMessages.NOT_FOUND, "Cart"))
                 );
 
         CartItem cartItem = cart.getCartItems().stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
+                .filter(item -> item.getProduct().getId().equals(reqDTO.getProductId()))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException(String.format(ExceptionMessages.NOT_FOUND, "Cart Item")));
 
-        cartItem.setQuantity(quantity);
+        cartItem.setQuantity(reqDTO.getQuantity());
         cartRepository.save(cart);
         return cartMapper.toDto(cart);
     }

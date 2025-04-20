@@ -1,11 +1,13 @@
 package com.nashtech.ecommercespring.controller.user;
 
+import com.nashtech.ecommercespring.dto.request.CartItemReqDTO;
 import com.nashtech.ecommercespring.dto.response.CartDTO;
 import com.nashtech.ecommercespring.response.ApiResponse;
 import com.nashtech.ecommercespring.response.SuccessMessages;
 import com.nashtech.ecommercespring.service.CartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,14 +35,11 @@ public class CartController {
 
     @PostMapping
     @Operation(summary = "Add a product to cart")
-    public ResponseEntity<ApiResponse<CartDTO>> addItemToCart(
-            @RequestParam UUID userId,
-            @RequestParam UUID productId
-    ) {
+    public ResponseEntity<ApiResponse<CartDTO>> addItemToCart(@RequestBody @Valid CartItemReqDTO reqDTO) {
         ApiResponse<CartDTO> response = ApiResponse.<CartDTO>builder()
                 .success(true)
                 .message(String.format(SuccessMessages.UPDATE_SUCCESS, "Cart"))
-                .data(cartService.addItemToCart(userId, productId))
+                .data(cartService.addItemToCart(reqDTO))
                 .build();
 
         return ResponseEntity.ok(response);
@@ -48,15 +47,11 @@ public class CartController {
 
     @PutMapping
     @Operation(summary = "Update quantity of a product in cart")
-    public ResponseEntity<ApiResponse<CartDTO>> updateQuantity(
-            @RequestParam UUID userId,
-            @RequestParam UUID productId,
-            @RequestParam int quantity
-    ) {
+    public ResponseEntity<ApiResponse<CartDTO>> updateQuantity(@RequestBody @Valid CartItemReqDTO reqDTO) {
         ApiResponse<CartDTO> response = ApiResponse.<CartDTO>builder()
                 .success(true)
                 .message(String.format(SuccessMessages.UPDATE_SUCCESS, "Cart"))
-                .data(cartService.updateQuantity(userId, productId, quantity))
+                .data(cartService.updateQuantity(reqDTO))
                 .build();
 
         return ResponseEntity.ok(response);
@@ -64,11 +59,8 @@ public class CartController {
 
     @DeleteMapping
     @Operation(summary = "Remove a product from cart")
-    public ResponseEntity<ApiResponse<Void>> removeItemFromCart(
-            @RequestParam UUID userId,
-            @RequestParam UUID productId
-    ) {
-        cartService.removeItemFromCart(userId, productId);
+    public ResponseEntity<ApiResponse<Void>> removeItemFromCart(@RequestBody @Valid CartItemReqDTO reqDTO) {
+        cartService.removeItemFromCart(reqDTO);
 
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .success(true)
