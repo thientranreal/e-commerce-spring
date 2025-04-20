@@ -2,6 +2,7 @@ package com.nashtech.ecommercespring.service.impl;
 
 import com.nashtech.ecommercespring.dto.request.CartItemReqDTO;
 import com.nashtech.ecommercespring.dto.response.CartDTO;
+import com.nashtech.ecommercespring.exception.BadRequestException;
 import com.nashtech.ecommercespring.exception.ExceptionMessages;
 import com.nashtech.ecommercespring.exception.NotFoundException;
 import com.nashtech.ecommercespring.mapper.CartMapper;
@@ -42,6 +43,12 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new NotFoundException(
                         String.format(ExceptionMessages.NOT_FOUND, "Product"))
                 );
+
+        if (product.getStock() == 0) {
+            throw new BadRequestException(
+                    String.format(ExceptionMessages.INSUFFICIENT_STOCK, 0, product.getName())
+            );
+        }
 
 //        If a user doesn't have a cart then create it
         Cart cart = cartRepository.findByUserId(reqDTO.getUserId()).orElseGet(() -> {
@@ -115,6 +122,16 @@ public class CartServiceImpl implements CartService {
                 .filter(item -> item.getProduct().getId().equals(reqDTO.getProductId()))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException(String.format(ExceptionMessages.NOT_FOUND, "Cart Item")));
+
+        if (cartItem.getProduct().getStock() < reqDTO.getQuantity()) {
+            throw new BadRequestException(
+                    String.format(
+                            ExceptionMessages.INSUFFICIENT_STOCK,
+                            cartItem.getProduct().getStock(),
+                            cartItem.getProduct().getName()
+                    )
+            );
+        }
 
         cartItem.setQuantity(reqDTO.getQuantity());
         cartRepository.save(cart);
