@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -44,7 +43,7 @@ public class ProductImageServiceImpl implements ProductImageService {
         List<ProductImage> images = productImageRepository.findByProductId(productId);
         return images.stream()
                 .map(productImageMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

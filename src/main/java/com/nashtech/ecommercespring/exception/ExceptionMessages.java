@@ -3,4 +3,6 @@ package com.nashtech.ecommercespring.exception;
 public class ExceptionMessages {
     public static final String NOT_FOUND = "%s not found";
     public static final String ALREADY_EXISTS = "%s already exists";
+    public static final String IS_EMPTY = "%s is empty";
+    public static final String INSUFFICIENT_STOCK = "Only %d units of %s are available in stock";
 }

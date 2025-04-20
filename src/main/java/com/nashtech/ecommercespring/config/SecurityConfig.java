@@ -52,6 +52,12 @@ public class SecurityConfig {
                     authorize.requestMatchers(SecurityConstants.ADMIN_API)
                             .hasAuthority(RoleName.ROLE_ADMIN.name());
 
+                    authorize.requestMatchers(SecurityConstants.USER_API)
+                            .hasAnyAuthority(
+                                    RoleName.ROLE_ADMIN.name(),
+                                    RoleName.ROLE_USER.name()
+                            );
+
                     authorize.requestMatchers(SecurityConstants.PUBLIC_API).permitAll();
 
                     authorize.anyRequest().authenticated();
