@@ -1,8 +1,8 @@
 package com.nashtech.ecommercespring.controller.admin;
 
-import com.nashtech.ecommercespring.dto.request.ProductImageReqDTO;
 import com.nashtech.ecommercespring.dto.request.ProductReqDTO;
 import com.nashtech.ecommercespring.dto.response.ProductDTO;
+import com.nashtech.ecommercespring.dto.response.ProductImageDTO;
 import com.nashtech.ecommercespring.response.ApiResponse;
 import com.nashtech.ecommercespring.response.SuccessMessages;
 import com.nashtech.ecommercespring.service.ProductImageService;
@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -71,17 +72,15 @@ public class AdminProductController {
 
     @PostMapping("/{productId}/images")
     @Operation(summary = "Add image to product")
-    public ResponseEntity<ApiResponse<Void>> addImageToProduct(
+    public ResponseEntity<ApiResponse<ProductImageDTO>> addImageToProduct(
             @PathVariable UUID productId,
-            @RequestBody @Valid ProductImageReqDTO imageDTO) {
-
-        productImageService.addImageToProduct(productId, imageDTO);
+            @RequestParam("file") MultipartFile file) {
 
         return ResponseEntity.ok(
-                ApiResponse.<Void>builder()
+                ApiResponse.<ProductImageDTO>builder()
                         .success(true)
                         .message(String.format(SuccessMessages.CREATE_SUCCESS, "Image"))
-                        .data(null)
+                        .data(productImageService.addImageToProduct(productId, file))
                         .build()
         );
     }

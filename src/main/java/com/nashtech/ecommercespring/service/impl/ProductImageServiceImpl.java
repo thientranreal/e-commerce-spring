@@ -1,6 +1,5 @@
 package com.nashtech.ecommercespring.service.impl;
 
-import com.nashtech.ecommercespring.dto.request.ProductImageReqDTO;
 import com.nashtech.ecommercespring.dto.response.ProductImageDTO;
 import com.nashtech.ecommercespring.exception.ExceptionMessages;
 import com.nashtech.ecommercespring.exception.NotFoundException;
@@ -9,9 +8,11 @@ import com.nashtech.ecommercespring.model.Product;
 import com.nashtech.ecommercespring.model.ProductImage;
 import com.nashtech.ecommercespring.repository.ProductImageRepository;
 import com.nashtech.ecommercespring.repository.ProductRepository;
+import com.nashtech.ecommercespring.service.CloudinaryService;
 import com.nashtech.ecommercespring.service.ProductImageService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,16 +27,25 @@ public class ProductImageServiceImpl implements ProductImageService {
 
     private final ProductImageMapper productImageMapper;
 
+    private final CloudinaryService cloudinaryService;
+
     @Override
-    public void addImageToProduct(UUID productId, ProductImageReqDTO imageDTO) {
+    public ProductImageDTO addImageToProduct(UUID productId, MultipartFile file) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException(
                         String.format(ExceptionMessages.NOT_FOUND, productId))
                 );
 
-        ProductImage productImage = productImageMapper.toEntity(imageDTO);
+        // Upload the image to Cloudinary and get the URL
+        String imageUrl = cloudinaryService.uploadImage(file);
+
+        // Create a new ProductImage entity and associate it with the product
+        ProductImage productImage = new ProductImage();
         productImage.setProduct(product);
-        productImageRepository.save(productImage);
+        productImage.setImageUrl(imageUrl);
+
+//        Save the productImage
+        return productImageMapper.toDto(productImageRepository.save(productImage));
     }
 
     @Override
@@ -53,6 +63,10 @@ public class ProductImageServiceImpl implements ProductImageService {
                         String.format(ExceptionMessages.NOT_FOUND, imageId))
                 );
 
+        // Delete the image from Cloudinary
+        cloudinaryService.deleteImage(productImage.getImageUrl());
+
+        // Delete the image record from the database
         productImageRepository.delete(productImage);
     }
 
