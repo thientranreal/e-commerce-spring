@@ -14,6 +14,7 @@ import java.util.UUID;
 
 public interface UserService {
     JwtAuthResponse login(AuthRequest request, HttpServletResponse httpServletResponse);
+    void logout(HttpServletResponse httpServletResponse);
     UserSignUpResDTO signUp(UserSignUpDTO userSignUpDTO);
     UserDTO createUser(UserReqDTO userCreateDTO);
     Page<UserDTO> getAllUsers(Pageable pageable);

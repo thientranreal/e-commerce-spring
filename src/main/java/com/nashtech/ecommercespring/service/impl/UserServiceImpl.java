@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
-                .maxAge(24 * 60 * 60)
+                .maxAge(24 * 60 * 60) // 1 day
                 .sameSite("Strict")
                 .build();
 
@@ -83,6 +83,21 @@ public class UserServiceImpl implements UserService {
         jwtAuthResponse.setAccessToken(token);
 
         return jwtAuthResponse;
+    }
+
+    @Override
+    public void logout(HttpServletResponse httpServletResponse) {
+        // Create an expired cookie
+        ResponseCookie cookie = ResponseCookie.from("spring_token", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0) // expires immediately
+                .sameSite("Strict")
+                .build();
+
+        // Add the cookie to the response
+        httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     @Override

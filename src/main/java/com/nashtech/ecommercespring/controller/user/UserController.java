@@ -5,6 +5,7 @@ import com.nashtech.ecommercespring.dto.response.JwtAuthResponse;
 import com.nashtech.ecommercespring.dto.request.UserSignUpDTO;
 import com.nashtech.ecommercespring.dto.response.UserSignUpResDTO;
 import com.nashtech.ecommercespring.response.ApiResponse;
+import com.nashtech.ecommercespring.response.SuccessMessages;
 import com.nashtech.ecommercespring.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,8 +32,21 @@ public class UserController {
     ){
         ApiResponse<JwtAuthResponse> response = ApiResponse.<JwtAuthResponse>builder()
                 .success(true)
-                .message("Login successfully")
+                .message(SuccessMessages.LOGIN_SUCCESS_MESSAGE)
                 .data(userService.login(request, httpServletResponse))
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(HttpServletResponse httpServletResponse) {
+        userService.logout(httpServletResponse);
+
+        ApiResponse<Void> response = ApiResponse.<Void>builder()
+                .success(true)
+                .message(SuccessMessages.LOGOUT_SUCCESS_MESSAGE)
+                .data(null)
                 .build();
 
         return ResponseEntity.ok(response);
