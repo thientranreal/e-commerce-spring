@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
 
         String token = jwtTokenProvider.generateToken(authentication);
 
-        ResponseCookie cookie = ResponseCookie.from("token", token)
+        ResponseCookie cookie = ResponseCookie.from("spring_token", token)
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
