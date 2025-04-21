@@ -19,9 +19,12 @@ import com.nashtech.ecommercespring.repository.UserInfoRepository;
 import com.nashtech.ecommercespring.repository.UserRepository;
 import com.nashtech.ecommercespring.security.JwtTokenProvider;
 import com.nashtech.ecommercespring.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -55,7 +58,7 @@ public class UserServiceImpl implements UserService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    public JwtAuthResponse login(AuthRequest request) {
+    public JwtAuthResponse login(AuthRequest request, HttpServletResponse httpServletResponse) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getEmail(),
                 request.getPassword()
@@ -64,6 +67,18 @@ public class UserServiceImpl implements UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String token = jwtTokenProvider.generateToken(authentication);
+
+        ResponseCookie cookie = ResponseCookie.from("token", token)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(24 * 60 * 60)
+                .sameSite("Strict")
+                .build();
+
+        // Set cookie in response header
+        httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setAccessToken(token);
 
@@ -83,13 +98,13 @@ public class UserServiceImpl implements UserService {
             );
         }
 
-        User user = userMapper.toEntity(userSignUpDTO);
-        user.setPassword(encoder.encode(userSignUpDTO.getPassword()));
-
         Role role = roleRepository.findByRoleName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new NotFoundException(
                         String.format(ExceptionMessages.NOT_FOUND, RoleName.ROLE_USER.name()))
                 );
+
+        User user = userMapper.toEntity(userSignUpDTO);
+        user.setPassword(encoder.encode(userSignUpDTO.getPassword()));
 
         user.setRoles(Set.of(role));
 

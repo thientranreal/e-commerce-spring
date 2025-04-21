@@ -8,6 +8,7 @@ import com.nashtech.ecommercespring.response.ApiResponse;
 import com.nashtech.ecommercespring.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +25,14 @@ public class UserController {
 
     @PostMapping("/login")
     @Operation(summary = "Login into the system")
-    public ResponseEntity<ApiResponse<JwtAuthResponse>> login(@RequestBody @Valid AuthRequest request){
+    public ResponseEntity<ApiResponse<JwtAuthResponse>> login(
+            @RequestBody @Valid AuthRequest request,
+            HttpServletResponse httpServletResponse
+    ){
         ApiResponse<JwtAuthResponse> response = ApiResponse.<JwtAuthResponse>builder()
                 .success(true)
                 .message("Login successfully")
-                .data(userService.login(request))
+                .data(userService.login(request, httpServletResponse))
                 .build();
 
         return ResponseEntity.ok(response);

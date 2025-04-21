@@ -6,13 +6,14 @@ import com.nashtech.ecommercespring.dto.response.JwtAuthResponse;
 import com.nashtech.ecommercespring.dto.response.UserDTO;
 import com.nashtech.ecommercespring.dto.request.UserSignUpDTO;
 import com.nashtech.ecommercespring.dto.response.UserSignUpResDTO;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
 public interface UserService {
-    JwtAuthResponse login(AuthRequest request);
+    JwtAuthResponse login(AuthRequest request, HttpServletResponse httpServletResponse);
     UserSignUpResDTO signUp(UserSignUpDTO userSignUpDTO);
     UserDTO createUser(UserReqDTO userCreateDTO);
     Page<UserDTO> getAllUsers(Pageable pageable);
