@@ -5,8 +5,10 @@ import com.nashtech.ecommercespring.dto.request.UserSignUpDTO;
 import com.nashtech.ecommercespring.dto.response.UserDTO;
 import com.nashtech.ecommercespring.dto.response.UserSignUpResDTO;
 import com.nashtech.ecommercespring.model.User;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -18,5 +20,6 @@ public interface UserMapper {
 
     User toEntity(UserSignUpDTO dto);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateUserFromDto(UserReqDTO dto, @MappingTarget User user);
 }

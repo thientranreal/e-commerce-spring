@@ -72,7 +72,7 @@ public class AdminUserController {
     @Operation(summary = "Update user")
     public ResponseEntity<ApiResponse<UserDTO>> updateUser(
             @PathVariable UUID id,
-            @RequestBody @Valid UserReqDTO userReqDTO
+            @RequestBody UserReqDTO userReqDTO
     ) {
         ApiResponse<UserDTO> response = ApiResponse.<UserDTO>builder()
                 .success(true)

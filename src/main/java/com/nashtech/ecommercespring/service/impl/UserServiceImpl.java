@@ -177,6 +177,10 @@ public class UserServiceImpl implements UserService {
                         String.format(ExceptionMessages.NOT_FOUND, id))
                 );
 
+        if (userRepository.findByEmail(userReqDTO.getEmail()).isPresent()) {
+            throw new BadRequestException(String.format(ExceptionMessages.ALREADY_EXISTS, userReqDTO.getEmail()));
+        }
+
 //        Check if role exist and get corresponding roles
         Set<Role> roles = userReqDTO.getRoleIds().stream()
                 .map(roleId -> roleRepository.findById(roleId)
@@ -188,7 +192,9 @@ public class UserServiceImpl implements UserService {
         userMapper.updateUserFromDto(userReqDTO, user);
 
         //        Update encoded password
-        user.setPassword(encoder.encode(userReqDTO.getPassword()));
+        if (userReqDTO.getPassword() != null) {
+            user.setPassword(encoder.encode(userReqDTO.getPassword()));
+        }
 
 //        Update role
         user.setRoles(roles);

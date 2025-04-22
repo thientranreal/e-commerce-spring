@@ -22,4 +22,6 @@ public class UserReqDTO {
 
     @NotEmpty
     private Set<UUID> roleIds;
+
+    private boolean deleted;
 }
