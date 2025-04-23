@@ -10,9 +10,10 @@ import com.nashtech.ecommercespring.model.Category;
 import com.nashtech.ecommercespring.repository.CategoryRepository;
 import com.nashtech.ecommercespring.service.CategoryService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -45,12 +46,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDTO> getAllCategories() {
+    public Page<CategoryDTO> getAllCategories(Pageable pageable) {
         return categoryRepository
-                .findAll()
-                .stream()
-                .map(categoryMapper::toDto)
-                .toList();
+                .findAll(pageable)
+                .map(categoryMapper::toDto);
     }
 
     @Override
