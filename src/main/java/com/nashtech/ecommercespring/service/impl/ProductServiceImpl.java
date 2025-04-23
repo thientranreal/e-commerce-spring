@@ -2,6 +2,7 @@ package com.nashtech.ecommercespring.service.impl;
 
 import com.nashtech.ecommercespring.dto.request.ProductReqDTO;
 import com.nashtech.ecommercespring.dto.response.ProductDTO;
+import com.nashtech.ecommercespring.enums.ProductStatus;
 import com.nashtech.ecommercespring.exception.ExceptionMessages;
 import com.nashtech.ecommercespring.exception.NotFoundException;
 import com.nashtech.ecommercespring.mapper.ProductMapper;
@@ -87,6 +88,7 @@ public class ProductServiceImpl implements ProductService {
                 );
 
         product.setDeleted(true);
+        product.setStatus(ProductStatus.DISCONTINUED);
         productRepository.save(product);
     }
 }
