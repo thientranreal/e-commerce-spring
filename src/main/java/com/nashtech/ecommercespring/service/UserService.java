@@ -9,6 +9,7 @@ import com.nashtech.ecommercespring.dto.response.UserSignUpResDTO;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.UUID;
 
@@ -21,4 +22,5 @@ public interface UserService {
     UserDTO getUserById(UUID id);
     UserDTO updateUser(UUID id, UserReqDTO userReqDTO);
     void deleteUser(UUID id);
+    UserDTO getCurrentUser(UserDetails userDetails);
 }

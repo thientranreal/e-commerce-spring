@@ -2,8 +2,6 @@ package com.nashtech.ecommercespring.controller.user;
 
 import com.nashtech.ecommercespring.dto.response.ProductDTO;
 import com.nashtech.ecommercespring.dto.response.ProductImageDTO;
-import com.nashtech.ecommercespring.exception.BadRequestException;
-import com.nashtech.ecommercespring.exception.ExceptionMessages;
 import com.nashtech.ecommercespring.response.ApiResponse;
 import com.nashtech.ecommercespring.response.SuccessMessages;
 import com.nashtech.ecommercespring.service.ProductImageService;
@@ -64,38 +62,17 @@ public class ProductController {
 
     // ---- Product Image ----
 
-    @GetMapping("/images")
-    @Operation(summary = "Get all images by productId or imageId")
-    public ResponseEntity<ApiResponse<?>> getImages(
-            @RequestParam(required = false) UUID productId,
-            @RequestParam(required = false) UUID imageId
-    ) {
-        if (imageId != null) {
-            ProductImageDTO image = productImageService.getImageById(imageId);
+    @GetMapping("/{productId}/images")
+    @Operation(summary = "Get all images by productId")
+    public ResponseEntity<ApiResponse<?>> getImages(@PathVariable UUID productId) {
+        List<ProductImageDTO> images = productImageService.getImagesByProductId(productId);
 
-            return ResponseEntity.ok(
-                    ApiResponse.<ProductImageDTO>builder()
-                            .success(true)
-                            .message(String.format(SuccessMessages.GET_BY_ID_SUCCESS, imageId))
-                            .data(image)
-                            .build()
-            );
-        }
-
-        if (productId != null) {
-            List<ProductImageDTO> images = productImageService.getImagesByProductId(productId);
-
-            return ResponseEntity.ok(
-                    ApiResponse.<List<ProductImageDTO>>builder()
-                            .success(true)
-                            .message(String.format(SuccessMessages.GET_ALL_SUCCESS, "product images"))
-                            .data(images)
-                            .build()
-            );
-        }
-
-        throw new BadRequestException(
-                String.format(ExceptionMessages.NOT_FOUND, "productId or imageId parameters")
+        return ResponseEntity.ok(
+                ApiResponse.<List<ProductImageDTO>>builder()
+                        .success(true)
+                        .message(String.format(SuccessMessages.GET_ALL_SUCCESS, "product images"))
+                        .data(images)
+                        .build()
         );
     }
 }

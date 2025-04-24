@@ -3,6 +3,7 @@ package com.nashtech.ecommercespring.controller.user;
 import com.nashtech.ecommercespring.dto.request.AuthRequest;
 import com.nashtech.ecommercespring.dto.response.JwtAuthResponse;
 import com.nashtech.ecommercespring.dto.request.UserSignUpDTO;
+import com.nashtech.ecommercespring.dto.response.UserDTO;
 import com.nashtech.ecommercespring.dto.response.UserSignUpResDTO;
 import com.nashtech.ecommercespring.response.ApiResponse;
 import com.nashtech.ecommercespring.response.SuccessMessages;
@@ -13,6 +14,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -47,6 +50,17 @@ public class UserController {
                 .success(true)
                 .message(SuccessMessages.LOGOUT_SUCCESS_MESSAGE)
                 .data(null)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        ApiResponse<UserDTO> response = ApiResponse.<UserDTO>builder()
+                .success(true)
+                .message(SuccessMessages.GET_CURRENT_USER_SUCCESS)
+                .data(userService.getCurrentUser(userDetails))
                 .build();
 
         return ResponseEntity.ok(response);
