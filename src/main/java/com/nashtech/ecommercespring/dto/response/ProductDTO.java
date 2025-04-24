@@ -28,7 +28,7 @@ public class ProductDTO {
 
     private LocalDateTime createdOn;
     private LocalDateTime lastUpdatedOn;
-    private boolean isDeleted;
+    private boolean deleted;
 
     private CategoryDTO category;
 

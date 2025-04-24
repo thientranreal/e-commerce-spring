@@ -31,5 +31,7 @@ public class ProductReqDTO {
 
     private boolean isFeatured;
 
+    private boolean deleted;
+
     private UUID categoryId;
 }
