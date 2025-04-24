@@ -1,4 +1,4 @@
-package com.nashtech.ecommercespring.controller.admin;
+package com.nashtech.ecommercespring.controller;
 
 import com.nashtech.ecommercespring.dto.request.ProductReqDTO;
 import com.nashtech.ecommercespring.dto.response.ProductDTO;
@@ -11,21 +11,60 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/admin/products")
-@Tag(name = "Admin Product", description = "Admin Product management APIs")
-public class AdminProductController {
-    private final ProductService productService;
-
+@RequestMapping("/api/products")
+@Tag(name = "Product", description = "Product APIs")
+public class ProductController {
     private final ProductImageService productImageService;
 
+    private final ProductService productService;
+
+    // ---- Product ----
+
+    @GetMapping
+    @Operation(summary = "Get all products or filter by category")
+    public ResponseEntity<ApiResponse<Page<ProductDTO>>> getAllProducts(
+            @RequestParam(required = false) UUID categoryId,
+            @PageableDefault(sort = "name") Pageable pageable
+    ) {
+        Page<ProductDTO> products = (categoryId == null)
+                ? productService.getAllProducts(pageable)
+                : productService.getProductsByCategory(categoryId, pageable);
+
+        ApiResponse<Page<ProductDTO>> response = ApiResponse.<Page<ProductDTO>>builder()
+                .success(true)
+                .message(String.format(SuccessMessages.GET_ALL_SUCCESS, "products"))
+                .data(products)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get product by ID")
+    public ResponseEntity<ApiResponse<ProductDTO>> getProductById(@PathVariable UUID id) {
+        ApiResponse<ProductDTO> response = ApiResponse.<ProductDTO>builder()
+                .success(true)
+                .message(String.format(SuccessMessages.GET_BY_ID_SUCCESS, id))
+                .data(productService.getProductById(id))
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping
     @Operation(summary = "Create a new product")
     public ResponseEntity<ApiResponse<ProductDTO>> createProduct(@RequestBody @Valid ProductReqDTO productReqDTO) {
@@ -38,6 +77,7 @@ public class AdminProductController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/{id}")
     @Operation(summary = "Update product")
     public ResponseEntity<ApiResponse<ProductDTO>> updateProduct(
@@ -54,6 +94,7 @@ public class AdminProductController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete product")
     public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable UUID id) {
@@ -70,6 +111,7 @@ public class AdminProductController {
 
     // ---- Product Image Management ----
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/{productId}/images")
     @Operation(summary = "Add image to product")
     public ResponseEntity<ApiResponse<ProductImageDTO>> addImageToProduct(
@@ -85,6 +127,7 @@ public class AdminProductController {
         );
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/images/{imageId}")
     @Operation(summary = "Delete product image")
     public ResponseEntity<ApiResponse<Void>> deleteImage(@PathVariable UUID imageId) {
@@ -94,6 +137,22 @@ public class AdminProductController {
                 ApiResponse.<Void>builder()
                         .success(true)
                         .message(String.format(SuccessMessages.DELETE_SUCCESS, imageId))
+                        .build()
+        );
+    }
+
+    // ---- Product Image ----
+
+    @GetMapping("/{productId}/images")
+    @Operation(summary = "Get all images by productId")
+    public ResponseEntity<ApiResponse<?>> getImages(@PathVariable UUID productId) {
+        List<ProductImageDTO> images = productImageService.getImagesByProductId(productId);
+
+        return ResponseEntity.ok(
+                ApiResponse.<List<ProductImageDTO>>builder()
+                        .success(true)
+                        .message(String.format(SuccessMessages.GET_ALL_SUCCESS, "product images"))
+                        .data(images)
                         .build()
         );
     }

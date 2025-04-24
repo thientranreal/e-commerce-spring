@@ -1,4 +1,4 @@
-package com.nashtech.ecommercespring.controller.user;
+package com.nashtech.ecommercespring.controller;
 
 import com.nashtech.ecommercespring.dto.request.RatingReqDTO;
 import com.nashtech.ecommercespring.dto.response.RatingDTO;

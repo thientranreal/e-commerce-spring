@@ -9,7 +9,7 @@ public class SecurityConstants {
     };
 
     public static final String[] ADMIN_API = {
-            "/api/admin/**"
+            "/api/roles"
     };
 
     public static final String[] USER_API = {
