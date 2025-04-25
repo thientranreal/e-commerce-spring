@@ -11,6 +11,7 @@ public interface CategoryService {
     CategoryDTO createCategory(CategoryReqDTO categoryDTO);
     CategoryDTO getCategoryById(UUID id);
     Page<CategoryDTO> getAllCategories(Pageable pageable);
+    Page<CategoryDTO> getCategoryByName(String name, Pageable pageable);
     CategoryDTO updateCategory(UUID id, CategoryReqDTO categoryDTO);
     void deleteCategory(UUID id);
 }

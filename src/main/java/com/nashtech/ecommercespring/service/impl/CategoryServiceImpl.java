@@ -53,6 +53,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public Page<CategoryDTO> getCategoryByName(String name, Pageable pageable) {
+        return categoryRepository
+                .findByNameContainingIgnoreCase(name, pageable)
+                .map(categoryMapper::toDto);
+    }
+
+    @Override
     public CategoryDTO updateCategory(UUID id, CategoryReqDTO categoryDTO) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(

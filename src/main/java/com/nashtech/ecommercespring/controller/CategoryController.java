@@ -27,14 +27,15 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    @Operation(summary = "Get all categories")
-    public ResponseEntity<ApiResponse<Page<CategoryDTO>>> getAllCategories(
+    @Operation(summary = "Get categories by search name")
+    public ResponseEntity<ApiResponse<Page<CategoryDTO>>> getCategoriesByName(
+            @RequestParam(defaultValue = "") String search,
             @PageableDefault(sort = "name") Pageable pageable
     ) {
         ApiResponse<Page<CategoryDTO>> response = ApiResponse.<Page<CategoryDTO>>builder()
                 .success(true)
                 .message(String.format(SuccessMessages.GET_ALL_SUCCESS, "categories"))
-                .data(categoryService.getAllCategories(pageable))
+                .data(categoryService.getCategoryByName(search, pageable))
                 .build();
 
         return ResponseEntity.ok(response);
