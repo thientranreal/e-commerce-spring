@@ -11,11 +11,15 @@ import com.nashtech.ecommercespring.model.Product;
 import com.nashtech.ecommercespring.repository.CategoryRepository;
 import com.nashtech.ecommercespring.repository.ProductRepository;
 import com.nashtech.ecommercespring.service.ProductService;
+import jakarta.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -60,6 +64,34 @@ public class ProductServiceImpl implements ProductService {
     public Page<ProductDTO> getProductsByCategory(UUID categoryId, Pageable pageable) {
         return productRepository.findByCategoryIdAndDeletedFalse(categoryId, pageable)
                 .map(productMapper::toDto);
+    }
+
+    @Override
+    public Page<ProductDTO> getFeaturedProducts(Pageable pageable) {
+        return productRepository.findByIsFeaturedTrueAndDeletedFalse(pageable)
+                .map(productMapper::toDto);
+    }
+
+    @Override
+    public Page<ProductDTO> getProductsByFilters(
+            String name,
+            UUID categoryId,
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            Pageable pageable) {
+        return productRepository.findAll((root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.between(root.get("price"), minPrice, maxPrice));
+            predicates.add(criteriaBuilder.isFalse(root.get("deleted")));
+
+            if (categoryId != null) {
+                predicates.add(criteriaBuilder.equal(root.get("category").get("id"), categoryId));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        }, pageable).map(productMapper::toDto);
     }
 
     @Override

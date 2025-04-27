@@ -19,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,14 +35,24 @@ public class ProductController {
     // ---- Product ----
 
     @GetMapping
-    @Operation(summary = "Get all products or filter by category")
+    @Operation(summary = "Get all products or filter")
     public ResponseEntity<ApiResponse<Page<ProductDTO>>> getAllProducts(
+            @RequestParam(required = false) String name,
             @RequestParam(required = false) UUID categoryId,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) boolean featured,
             @PageableDefault(sort = "name") Pageable pageable
     ) {
-        Page<ProductDTO> products = (categoryId == null)
-                ? productService.getAllProducts(pageable)
-                : productService.getProductsByCategory(categoryId, pageable);
+        Page<ProductDTO> products;
+
+        if (name != null && minPrice != null && maxPrice != null) {
+            products = productService.getProductsByFilters(name, categoryId, minPrice, maxPrice, pageable);
+        } else if (featured) {
+            products = productService.getFeaturedProducts(pageable);
+        } else {
+            products = productService.getAllProducts(pageable);
+        }
 
         ApiResponse<Page<ProductDTO>> response = ApiResponse.<Page<ProductDTO>>builder()
                 .success(true)
