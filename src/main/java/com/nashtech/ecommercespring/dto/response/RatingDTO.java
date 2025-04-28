@@ -15,5 +15,7 @@ public class RatingDTO {
 
     private String comment;
 
+    private String email;
+
     private LocalDateTime createdOn;
 }
