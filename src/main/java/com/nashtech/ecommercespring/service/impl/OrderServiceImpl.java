@@ -2,6 +2,7 @@ package com.nashtech.ecommercespring.service.impl;
 
 import com.nashtech.ecommercespring.dto.response.OrderDTO;
 import com.nashtech.ecommercespring.enums.OrderStatus;
+import com.nashtech.ecommercespring.enums.ProductStatus;
 import com.nashtech.ecommercespring.exception.BadRequestException;
 import com.nashtech.ecommercespring.exception.ExceptionMessages;
 import com.nashtech.ecommercespring.exception.NotFoundException;
@@ -13,6 +14,7 @@ import com.nashtech.ecommercespring.repository.UserRepository;
 import com.nashtech.ecommercespring.service.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,6 +28,7 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final OrderMapper orderMapper;
 
+    @Transactional
     @Override
     public OrderDTO placeOrder(UUID userId) {
         User user = userRepository.findById(userId)
@@ -67,6 +70,10 @@ public class OrderServiceImpl implements OrderService {
 
                     // Reduce stock
                     product.setStock(product.getStock() - requestedQuantity);
+
+                    if (product.getStock() == 0) {
+                        product.setStatus(ProductStatus.OUT_OF_STOCK);
+                    }
 
                     OrderItem orderItem = orderMapper.toOrderItem(cartItem);
                     orderItem.setOrder(finalOrder);
