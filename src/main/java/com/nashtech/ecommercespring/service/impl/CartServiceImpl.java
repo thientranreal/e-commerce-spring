@@ -2,6 +2,7 @@ package com.nashtech.ecommercespring.service.impl;
 
 import com.nashtech.ecommercespring.dto.request.CartItemReqDTO;
 import com.nashtech.ecommercespring.dto.response.CartDTO;
+import com.nashtech.ecommercespring.enums.ProductStatus;
 import com.nashtech.ecommercespring.exception.BadRequestException;
 import com.nashtech.ecommercespring.exception.ExceptionMessages;
 import com.nashtech.ecommercespring.exception.NotFoundException;
@@ -43,6 +44,12 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new NotFoundException(
                         String.format(ExceptionMessages.NOT_FOUND, "Product"))
                 );
+
+        if (product.getStatus() != ProductStatus.ACTIVE) {
+            throw new BadRequestException(
+                    String.format(ExceptionMessages.PRODUCT_STATUS_IS, product.getStatus())
+            );
+        }
 
         if (product.getStock() == 0) {
             throw new BadRequestException(
@@ -122,6 +129,12 @@ public class CartServiceImpl implements CartService {
                 .filter(item -> item.getProduct().getId().equals(reqDTO.getProductId()))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException(String.format(ExceptionMessages.NOT_FOUND, "Cart Item")));
+
+        if (cartItem.getProduct().getStatus() != ProductStatus.ACTIVE) {
+            throw new BadRequestException(
+                    String.format(ExceptionMessages.PRODUCT_STATUS_IS, cartItem.getProduct().getStatus())
+            );
+        }
 
         if (cartItem.getProduct().getStock() < reqDTO.getQuantity()) {
             throw new BadRequestException(

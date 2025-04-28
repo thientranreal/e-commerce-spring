@@ -7,4 +7,5 @@ public class ExceptionMessages {
     public static final String INSUFFICIENT_STOCK = "Only %d units of %s are available in stock";
     public static final String IMAGE_UPLOAD_FAILED = "Image upload failed";
     public static final String IMAGE_DELETE_FAILED = "Image delete failed";
+    public static final String PRODUCT_STATUS_IS = "Product status is %s";
 }
