@@ -47,7 +47,11 @@ public class CartServiceImpl implements CartService {
 
         if (product.getStatus() != ProductStatus.ACTIVE) {
             throw new BadRequestException(
-                    String.format(ExceptionMessages.PRODUCT_STATUS_IS, product.getStatus())
+                    String.format(
+                            ExceptionMessages.PRODUCT_STATUS_IS,
+                            product.getName(),
+                            product.getStatus())
+
             );
         }
 
@@ -132,7 +136,11 @@ public class CartServiceImpl implements CartService {
 
         if (cartItem.getProduct().getStatus() != ProductStatus.ACTIVE) {
             throw new BadRequestException(
-                    String.format(ExceptionMessages.PRODUCT_STATUS_IS, cartItem.getProduct().getStatus())
+                    String.format(
+                            ExceptionMessages.PRODUCT_STATUS_IS,
+                            cartItem.getProduct().getName(),
+                            cartItem.getProduct().getStatus()
+                    )
             );
         }
 

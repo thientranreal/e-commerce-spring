@@ -56,8 +56,18 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItem> orderItems = cart.getCartItems().stream()
                 .map(cartItem -> {
                     Product product = cartItem.getProduct();
-                    int requestedQuantity = cartItem.getQuantity();
 
+                    if (product.getStatus() != ProductStatus.ACTIVE) {
+                        throw new BadRequestException(
+                                String.format(
+                                        ExceptionMessages.PRODUCT_STATUS_IS,
+                                        product.getName(),
+                                        product.getStatus()
+                                )
+                        );
+                    }
+
+                    int requestedQuantity = cartItem.getQuantity();
                     if (product.getStock() < requestedQuantity) {
                         throw new BadRequestException(
                                 String.format(
