@@ -22,6 +22,10 @@ public class ProductDTO {
 
     private int stock;
 
+    private double avgRating;
+
+    private int ratingCount;
+
     private ProductStatus status;
 
     private boolean isFeatured;

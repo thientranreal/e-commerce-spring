@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -42,6 +43,7 @@ public class RatingServiceImpl implements RatingService {
                 .map(ratingMapper::toDto);
     }
 
+    @Transactional
     @Override
     public RatingDTO createRating(RatingReqDTO ratingReqDTO) {
         Product product = productRepository
@@ -55,6 +57,18 @@ public class RatingServiceImpl implements RatingService {
                 .orElseThrow(() -> new NotFoundException(
                         String.format(ExceptionMessages.NOT_FOUND, ratingReqDTO.getUserId())
                 ));
+        
+//        Calculate avg rating
+        int newRating = ratingReqDTO.getRatingValue();
+        int currentCount = product.getRatingCount();
+
+        double currentAvg = product.getAvgRating();
+        double newAvg = ((currentAvg * currentCount) + newRating) / (currentCount + 1);
+
+        product.setAvgRating(newAvg);
+        product.setRatingCount(currentCount + 1);
+
+        productRepository.save(product);
 
         Rating rating = ratingMapper.toEntity(ratingReqDTO);
         rating.setProduct(product);

@@ -31,6 +31,12 @@ public class Product {
     @Column(nullable = false)
     private int stock;
 
+    @Column
+    private double avgRating = 0.0;
+
+    @Column
+    private int ratingCount = 0;
+
     @Column(length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
