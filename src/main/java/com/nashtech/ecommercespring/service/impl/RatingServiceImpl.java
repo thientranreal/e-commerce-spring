@@ -57,7 +57,7 @@ public class RatingServiceImpl implements RatingService {
                 .orElseThrow(() -> new NotFoundException(
                         String.format(ExceptionMessages.NOT_FOUND, ratingReqDTO.getUserId())
                 ));
-        
+
 //        Calculate avg rating
         int newRating = ratingReqDTO.getRatingValue();
         int currentCount = product.getRatingCount();

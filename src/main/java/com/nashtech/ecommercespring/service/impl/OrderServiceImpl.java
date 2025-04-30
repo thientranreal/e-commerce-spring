@@ -126,4 +126,16 @@ public class OrderServiceImpl implements OrderService {
                 .map(orderMapper::toDto)
                 .toList();
     }
+
+    @Override
+    public OrderDTO updateStatusById(UUID orderId, OrderStatus status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(ExceptionMessages.NOT_FOUND, "Order")
+                ));
+
+        order.setStatus(status);
+
+        return orderMapper.toDto(orderRepository.save(order));
+    }
 }

@@ -9,4 +9,5 @@ public class SuccessMessages {
     public static final String DELETE_SUCCESS = "%s deleted successfully";
     public static final String GET_ALL_SUCCESS = "Get all %s successfully";
     public static final String GET_BY_ID_SUCCESS = "Get by id: %s successfully";
+    public static final String PAYMENT_SUCCESSFUL = "Payment successful";
 }
