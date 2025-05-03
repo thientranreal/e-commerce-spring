@@ -12,6 +12,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -50,20 +51,31 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests((authorize) -> {
-                    authorize.requestMatchers(SecurityConstants.ADMIN_API)
-                            .hasAuthority(RoleName.ROLE_ADMIN.name());
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(SecurityConstants.PUBLIC_API).permitAll()
 
-                    authorize.requestMatchers(SecurityConstants.USER_API)
-                            .hasAnyAuthority(
+                        .requestMatchers(HttpMethod.GET, SecurityConstants.ADMIN_WRITE_API).permitAll()
+
+                        .requestMatchers(HttpMethod.GET, SecurityConstants.RATING_API).permitAll()
+
+                        .requestMatchers(SecurityConstants.USER_API).hasAnyAuthority(
+                                RoleName.ROLE_ADMIN.name(),
+                                RoleName.ROLE_USER.name()
+                        )
+
+                        .requestMatchers(SecurityConstants.ADMIN_API).hasAuthority(RoleName.ROLE_ADMIN.name())
+
+                        .requestMatchers(HttpMethod.POST, SecurityConstants.ADMIN_WRITE_API).hasAuthority(RoleName.ROLE_ADMIN.name())
+                        .requestMatchers(HttpMethod.PUT, SecurityConstants.ADMIN_WRITE_API).hasAuthority(RoleName.ROLE_ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, SecurityConstants.ADMIN_WRITE_API).hasAuthority(RoleName.ROLE_ADMIN.name())
+
+                        .requestMatchers(HttpMethod.POST, SecurityConstants.RATING_API).hasAnyAuthority(
                                     RoleName.ROLE_ADMIN.name(),
                                     RoleName.ROLE_USER.name()
-                            );
+                            )
 
-                    authorize.requestMatchers(SecurityConstants.PUBLIC_API).permitAll();
-
-                    authorize.anyRequest().authenticated();
-                }).httpBasic(Customizer.withDefaults());
+                        .anyRequest().authenticated()
+                ).httpBasic(Customizer.withDefaults());
 
         http.exceptionHandling( exception -> exception
                 .authenticationEntryPoint(authenticationEntryPoint));

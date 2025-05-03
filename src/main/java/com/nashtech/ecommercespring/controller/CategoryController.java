@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -53,7 +52,6 @@ public class CategoryController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping
     @Operation(summary = "Create a new category")
     public ResponseEntity<ApiResponse<CategoryDTO>> createCategory(@RequestBody @Valid CategoryReqDTO dto) {
@@ -66,7 +64,6 @@ public class CategoryController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/{id}")
     @Operation(summary = "Update category")
     public ResponseEntity<ApiResponse<CategoryDTO>> updateCategory(
@@ -83,7 +80,6 @@ public class CategoryController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete category")
     public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable UUID id) {
