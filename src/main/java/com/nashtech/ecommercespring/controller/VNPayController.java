@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -24,14 +23,13 @@ public class VNPayController {
     public ResponseEntity<ApiResponse<String>> createVNPayPaymentUrl(
             HttpServletRequest req,
             @RequestBody @Valid PaymentReqDTO paymentReqDTO
-            ) throws IOException {
+            ) {
         ApiResponse<String> response = ApiResponse.<String>builder()
                 .success(true)
                 .message(String.format(SuccessMessages.CREATE_SUCCESS, "Payment URL"))
                 .data(vnPayService.createVNPayPaymentUrl(
                         req,
-                        paymentReqDTO.getOrderId(),
-                        paymentReqDTO.getTotalPrice())
+                        paymentReqDTO.getOrderId())
                 )
                 .build();
 

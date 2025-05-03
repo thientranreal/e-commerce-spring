@@ -8,11 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface VNPayService {
-    String createVNPayPaymentUrl(
-            HttpServletRequest req,
-            UUID orderId,
-            int totalPrice
-    ) throws IOException;
+    String createVNPayPaymentUrl(HttpServletRequest req, UUID orderId);
 
     OrderDTO updateOrderStatusByParams(Map<String, String> params);
 }

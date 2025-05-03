@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -26,11 +26,10 @@ public class VNPayServiceImpl  implements VNPayService {
     private final OrderService orderService;
 
     @Override
-    public String createVNPayPaymentUrl(
-            HttpServletRequest req,
-            UUID orderId,
-            int totalPrice
-    ) throws IOException {
+    public String createVNPayPaymentUrl(HttpServletRequest req, UUID orderId) {
+
+        OrderDTO order = orderService.getOrderById(orderId);
+
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
@@ -39,7 +38,7 @@ public class VNPayServiceImpl  implements VNPayService {
         String vnp_IpAddr = vnPayConfig.getIpAddress(req);
         String vnp_TmnCode = vnPayConfig.vnp_TmnCode;
 
-        int amount = totalPrice * 100;
+        BigDecimal amount = order.getTotal().multiply(BigDecimal.valueOf(100));
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);

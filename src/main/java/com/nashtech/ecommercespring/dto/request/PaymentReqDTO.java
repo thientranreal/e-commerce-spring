@@ -11,6 +11,4 @@ import java.util.UUID;
 public class PaymentReqDTO {
     @NotNull
     private UUID orderId;
-    @NotNull
-    private int totalPrice;
 }
