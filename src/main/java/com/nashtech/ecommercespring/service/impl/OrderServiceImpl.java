@@ -127,12 +127,25 @@ public class OrderServiceImpl implements OrderService {
                 .toList();
     }
 
+    @Transactional
     @Override
     public OrderDTO updateStatusById(UUID orderId, OrderStatus status) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException(
                         String.format(ExceptionMessages.NOT_FOUND, "Order")
                 ));
+
+//        Restore stock when order is cancelled
+        if (status == OrderStatus.CANCELLED && order.getStatus() != OrderStatus.CANCELLED) {
+            order.getOrderItems().forEach(orderItem -> {
+                Product product = orderItem.getProduct();
+                product.setStock(product.getStock() + orderItem.getQuantity());
+
+                if (product.getStatus() == ProductStatus.OUT_OF_STOCK && product.getStock() > 0) {
+                    product.setStatus(ProductStatus.ACTIVE);
+                }
+            });
+        }
 
         order.setStatus(status);
 
