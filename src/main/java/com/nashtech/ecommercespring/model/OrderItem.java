@@ -1,8 +1,6 @@
 package com.nashtech.ecommercespring.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,11 +16,10 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Min(1)
+    @Column(nullable = false)
     private int quantity;
 
-    @DecimalMin(value = "0", inclusive = false)
-    @Column(precision = 15)
+    @Column(precision = 15, nullable = false)
     private BigDecimal price;
 
     @ManyToOne(fetch = FetchType.LAZY)

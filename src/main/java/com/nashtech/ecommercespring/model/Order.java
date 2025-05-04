@@ -1,12 +1,13 @@
 package com.nashtech.ecommercespring.model;
 
+import com.nashtech.ecommercespring.enums.OrderStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,9 +20,12 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @DecimalMin(value = "0", inclusive = false)
-    @Column(precision = 15)
+    @Column(precision = 15, nullable = false)
     private BigDecimal total;
+
+    @Column(length = 15, nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     private LocalDateTime createdOn;
 
@@ -29,8 +33,8 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
-    private List<OrderItem> orderItems;
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

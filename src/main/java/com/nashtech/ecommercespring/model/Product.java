@@ -1,9 +1,7 @@
 package com.nashtech.ecommercespring.model;
 
+import com.nashtech.ecommercespring.enums.ProductStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,23 +19,33 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @NotBlank
-    @Size(max = 100)
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String name;
 
-    @Size(max = 2000)
     @Column(length = 2000)
     private String description;
 
-    @DecimalMin(value = "0", inclusive = false)
-    @Column(precision = 15)
+    @Column(precision = 15, nullable = false)
     private BigDecimal price;
+
+    @Column(nullable = false)
+    private int stock;
+
+    @Column
+    private double avgRating = 0.0;
+
+    @Column
+    private int ratingCount = 0;
+
+    @Column(length = 20, nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProductStatus status;
 
     private boolean isFeatured;
 
     private LocalDateTime createdOn;
     private LocalDateTime lastUpdatedOn;
+    private boolean deleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")

@@ -1,5 +1,5 @@
 package com.nashtech.ecommercespring.enums;
 
-public enum Role {
+public enum RoleName {
     ROLE_USER, ROLE_ADMIN
 }

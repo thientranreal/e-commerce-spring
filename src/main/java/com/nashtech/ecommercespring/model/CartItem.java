@@ -1,7 +1,6 @@
 package com.nashtech.ecommercespring.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +15,7 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Min(1)
+    @Column(nullable = false)
     private int quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)

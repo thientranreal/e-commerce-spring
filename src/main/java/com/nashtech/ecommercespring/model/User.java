@@ -1,15 +1,12 @@
 package com.nashtech.ecommercespring.model;
 
-import com.nashtech.ecommercespring.enums.Role;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -21,29 +18,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Email
-    @Column(unique = true)
+    @Column(unique = true, nullable = false, length = 100)
     private String email;
 
-    @Size(min = 5, max = 60)
-    @Column(length = 60)
+    @Column(length = 60, nullable = false)
     private String password;
-
-    @NotBlank
-    @Size(max = 50)
-    @Column(length = 50)
-    private String firstName;
-
-    @NotBlank
-    @Size(max = 50)
-    @Column(length = 50)
-    private String lastName;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
 
     private LocalDateTime createdOn;
     private LocalDateTime lastUpdatedOn;
+    private boolean deleted;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
+    )
+    private Set<Role> roles;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Rating> ratings;
@@ -53,6 +43,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Order> orders;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<UserInfo> userInfos;
 
     @PrePersist
     protected void onCreate() {
