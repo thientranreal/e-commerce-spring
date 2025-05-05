@@ -21,6 +21,7 @@ public interface ProductService {
             UUID categoryId,
             BigDecimal minPrice,
             BigDecimal maxPrice,
-            Pageable pageable);
-
+            boolean deleted,
+            Pageable pageable
+    );
 }

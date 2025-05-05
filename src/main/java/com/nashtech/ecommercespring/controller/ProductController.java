@@ -41,12 +41,13 @@ public class ProductController {
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) boolean featured,
+            @RequestParam(required = false, defaultValue = "false") boolean deleted,
             @PageableDefault(sort = "name") Pageable pageable
     ) {
         Page<ProductDTO> products;
 
         if (name != null && minPrice != null && maxPrice != null) {
-            products = productService.getProductsByFilters(name, categoryId, minPrice, maxPrice, pageable);
+            products = productService.getProductsByFilters(name, categoryId, minPrice, maxPrice, deleted, pageable);
         } else if (featured) {
             products = productService.getFeaturedProducts(pageable);
         } else {
