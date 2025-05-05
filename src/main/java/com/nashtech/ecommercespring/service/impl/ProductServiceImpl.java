@@ -61,12 +61,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductDTO> getProductsByCategory(UUID categoryId, Pageable pageable) {
-        return productRepository.findByCategoryIdAndDeletedFalse(categoryId, pageable)
-                .map(productMapper::toDto);
-    }
-
-    @Override
     public Page<ProductDTO> getFeaturedProducts(Pageable pageable) {
         return productRepository.findByIsFeaturedTrueAndDeletedFalse(pageable)
                 .map(productMapper::toDto);
