@@ -127,11 +127,15 @@ public class VNPayServiceImpl  implements VNPayService {
                                 OrderStatus.CANCELLED
                         );
 
-                throw new BadRequestException(ExceptionMessages.PAYMENT_FAILED);
+                throw new BadRequestException(
+                        String.format(ExceptionMessages.PAYMENT_FAILED, params.get("vnp_TxnRef"))
+                );
             }
         } else {
 //            If the signature is invalid
-            throw new BadRequestException(ExceptionMessages.PAYMENT_INVALID_SIGNATURE);
+            throw new BadRequestException(
+                    String.format(ExceptionMessages.PAYMENT_INVALID_SIGNATURE, params.get("vnp_TxnRef"))
+            );
         }
     }
 }

@@ -10,6 +10,8 @@ public class ExceptionMessages {
     public static final String IMAGE_DELETE_FAILED = "Image delete failed";
     public static final String PRODUCT_STATUS_IS = "%s status is %s";
 
-    public static final String PAYMENT_FAILED = "Payment failed";
-    public static final String PAYMENT_INVALID_SIGNATURE = "Payment invalid signature";
+    public static final String PAYMENT_FAILED = "Payment id: %s failed";
+    public static final String PAYMENT_INVALID_SIGNATURE = "Payment id: %s invalid signature";
+
+    public static final String UNEXPECTED_ERROR = "Unexpected error occurred";
 }
