@@ -78,13 +78,17 @@ public class ProductServiceImpl implements ProductService {
             UUID categoryId,
             BigDecimal minPrice,
             BigDecimal maxPrice,
+            boolean deleted,
             Pageable pageable) {
         return productRepository.findAll((root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
             predicates.add(criteriaBuilder.between(root.get("price"), minPrice, maxPrice));
-            predicates.add(criteriaBuilder.isFalse(root.get("deleted")));
+
+            if (!deleted) {
+                predicates.add(criteriaBuilder.isFalse(root.get("deleted")));
+            }
 
             if (categoryId != null) {
                 predicates.add(criteriaBuilder.equal(root.get("category").get("id"), categoryId));
