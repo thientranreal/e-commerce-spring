@@ -40,20 +40,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDTO addItemToCart(CartItemReqDTO reqDTO) {
-        Product product = productRepository.findById(reqDTO.getProductId())
-                .orElseThrow(() -> new NotFoundException(
-                        String.format(ExceptionMessages.NOT_FOUND, "Product"))
-                );
-
-        if (product.getStatus() != ProductStatus.ACTIVE) {
-            throw new BadRequestException(
-                    String.format(
-                            ExceptionMessages.PRODUCT_STATUS_IS,
-                            product.getName(),
-                            product.getStatus())
-
-            );
-        }
+        Product product = getActiveProduct(reqDTO.getProductId());
 
         if (product.getStock() == 0) {
             throw new BadRequestException(
@@ -62,19 +49,10 @@ public class CartServiceImpl implements CartService {
         }
 
 //        If a user doesn't have a cart then create it
-        Cart cart = cartRepository.findByUserId(reqDTO.getUserId()).orElseGet(() -> {
-                    User user = userRepository.findById(reqDTO.getUserId())
-                            .orElseThrow(() -> new NotFoundException(String.format(ExceptionMessages.NOT_FOUND, "User")));
-                    Cart newCart = new Cart();
-                    newCart.setUser(user);
-                    return cartRepository.save(newCart);
-                });
+        Cart cart = getOrCreateCart(reqDTO.getUserId());
 
 //        Update cartItem by one if it already exists
-        CartItem cartItem = cart.getCartItems().stream()
-                .filter(item -> item.getProduct().getId().equals(reqDTO.getProductId()))
-                .findFirst()
-                .orElse(null);
+        CartItem cartItem = findCartItem(cart, reqDTO.getProductId());
 
         if (cartItem != null) {
             cartItem.setQuantity(cartItem.getQuantity() + 1);
@@ -92,10 +70,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void removeItemFromCart(CartItemReqDTO reqDTO) {
-        Cart cart = cartRepository.findByUserId(reqDTO.getUserId())
-                .orElseThrow(() -> new NotFoundException(
-                        String.format(ExceptionMessages.NOT_FOUND, "Cart"))
-                );
+        Cart cart = getCartByUserId(reqDTO.getUserId());
 
         boolean removed = cart.getCartItems()
                 .removeIf(item -> item.getProduct().getId().equals(reqDTO.getProductId()));
@@ -124,15 +99,13 @@ public class CartServiceImpl implements CartService {
             return getCart(reqDTO.getUserId());
         }
 
-        Cart cart = cartRepository.findByUserId(reqDTO.getUserId())
-                .orElseThrow(() -> new NotFoundException(
-                        String.format(ExceptionMessages.NOT_FOUND, "Cart"))
-                );
+        Cart cart = getCartByUserId(reqDTO.getUserId());
 
-        CartItem cartItem = cart.getCartItems().stream()
-                .filter(item -> item.getProduct().getId().equals(reqDTO.getProductId()))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException(String.format(ExceptionMessages.NOT_FOUND, "Cart Item")));
+        CartItem cartItem = findCartItem(cart, reqDTO.getProductId());
+
+        if (cartItem == null) {
+            throw new NotFoundException(String.format(ExceptionMessages.NOT_FOUND, "Cart Item"));
+        }
 
         if (cartItem.getProduct().getStatus() != ProductStatus.ACTIVE) {
             throw new BadRequestException(
@@ -157,5 +130,50 @@ public class CartServiceImpl implements CartService {
         cartItem.setQuantity(reqDTO.getQuantity());
         cartRepository.save(cart);
         return cartMapper.toDto(cart);
+    }
+
+    // ====================== Helper Methods ======================
+
+    private Cart getCartByUserId(UUID userId) {
+        return cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(ExceptionMessages.NOT_FOUND, "Cart")));
+    }
+
+    private Product getActiveProduct(UUID productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(ExceptionMessages.NOT_FOUND, "Product"))
+                );
+
+        if (product.getStatus() != ProductStatus.ACTIVE) {
+            throw new BadRequestException(
+                    String.format(
+                            ExceptionMessages.PRODUCT_STATUS_IS,
+                            product.getName(),
+                            product.getStatus())
+
+            );
+        }
+
+        return product;
+    }
+
+    private Cart getOrCreateCart(UUID userId) {
+        return cartRepository.findByUserId(userId).orElseGet(() -> {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new NotFoundException(
+                            String.format(ExceptionMessages.NOT_FOUND, "User")));
+            Cart newCart = new Cart();
+            newCart.setUser(user);
+            return cartRepository.save(newCart);
+        });
+    }
+
+    private CartItem findCartItem(Cart cart, UUID productId) {
+        return cart.getCartItems().stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElse(null);
     }
 }
