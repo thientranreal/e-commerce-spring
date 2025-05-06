@@ -2,12 +2,13 @@ package com.nashtech.ecommercespring.service.impl;
 
 import com.nashtech.ecommercespring.dto.request.RatingReqDTO;
 import com.nashtech.ecommercespring.dto.response.RatingDTO;
+import com.nashtech.ecommercespring.enums.OrderStatus;
+import com.nashtech.ecommercespring.exception.BadRequestException;
 import com.nashtech.ecommercespring.exception.ExceptionMessages;
 import com.nashtech.ecommercespring.exception.NotFoundException;
 import com.nashtech.ecommercespring.mapper.RatingMapper;
-import com.nashtech.ecommercespring.model.Product;
-import com.nashtech.ecommercespring.model.Rating;
-import com.nashtech.ecommercespring.model.User;
+import com.nashtech.ecommercespring.model.*;
+import com.nashtech.ecommercespring.repository.OrderRepository;
 import com.nashtech.ecommercespring.repository.ProductRepository;
 import com.nashtech.ecommercespring.repository.RatingRepository;
 import com.nashtech.ecommercespring.repository.UserRepository;
@@ -30,6 +31,8 @@ public class RatingServiceImpl implements RatingService {
     private final ProductRepository productRepository;
 
     private final UserRepository userRepository;
+
+    private final OrderRepository orderRepository;
 
     @Override
     public Page<RatingDTO> getRatingsByProduct(UUID productId, Pageable pageable) {
@@ -57,6 +60,17 @@ public class RatingServiceImpl implements RatingService {
                 .orElseThrow(() -> new NotFoundException(
                         String.format(ExceptionMessages.NOT_FOUND, ratingReqDTO.getUserId())
                 ));
+
+//        Check if user bought that product
+        if (!orderRepository.existsByUserIdAndOrderItemsProductIdAndStatus(
+                ratingReqDTO.getUserId(),
+                ratingReqDTO.getProductId(),
+                OrderStatus.CONFIRMED
+        )) {
+            throw new BadRequestException(
+                    String.format(ExceptionMessages.PRODUCT_NOT_PURCHASED, product.getName())
+            );
+        }
 
 //        Calculate avg rating
         int newRating = ratingReqDTO.getRatingValue();
