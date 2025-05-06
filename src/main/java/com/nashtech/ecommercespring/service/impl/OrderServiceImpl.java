@@ -52,58 +52,16 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.PENDING);
 
         // Check stock and convert to order items
-        Order finalOrder = order;
-        List<OrderItem> orderItems = cart.getCartItems().stream()
-                .map(cartItem -> {
-                    Product product = cartItem.getProduct();
-
-                    if (product.getStatus() != ProductStatus.ACTIVE) {
-                        throw new BadRequestException(
-                                String.format(
-                                        ExceptionMessages.PRODUCT_STATUS_IS,
-                                        product.getName(),
-                                        product.getStatus()
-                                )
-                        );
-                    }
-
-                    int requestedQuantity = cartItem.getQuantity();
-                    if (product.getStock() < requestedQuantity) {
-                        throw new BadRequestException(
-                                String.format(
-                                        ExceptionMessages.INSUFFICIENT_STOCK,
-                                        product.getStock(),
-                                        product.getName()
-                                )
-                        );
-                    }
-
-                    // Reduce stock
-                    product.setStock(product.getStock() - requestedQuantity);
-
-                    if (product.getStock() == 0) {
-                        product.setStatus(ProductStatus.OUT_OF_STOCK);
-                    }
-
-                    OrderItem orderItem = orderMapper.toOrderItem(cartItem);
-                    orderItem.setOrder(finalOrder);
-                    return orderItem;
-                })
-                .toList();
-
+        List<OrderItem> orderItems = processCartItems(cart, order);
         order.setOrderItems(orderItems);
 
 //        Calculate total price
-        order.setTotal(orderItems.stream()
-                .map(item -> item
-                        .getPrice()
-                        .multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add));
+        order.setTotal(calculateTotal(orderItems));
 
         // Save order and clear cart
         order = orderRepository.save(order);
-        cart.getCartItems().clear();
-        cartRepository.save(cart);
+
+        clearCart(cart);
 
         return orderMapper.toDto(order);
     }
@@ -137,18 +95,82 @@ public class OrderServiceImpl implements OrderService {
 
 //        Restore stock when order is cancelled
         if (status == OrderStatus.CANCELLED && order.getStatus() != OrderStatus.CANCELLED) {
-            order.getOrderItems().forEach(orderItem -> {
-                Product product = orderItem.getProduct();
-                product.setStock(product.getStock() + orderItem.getQuantity());
-
-                if (product.getStatus() == ProductStatus.OUT_OF_STOCK && product.getStock() > 0) {
-                    product.setStatus(ProductStatus.ACTIVE);
-                }
-            });
+            restoreProductStock(order);
         }
 
         order.setStatus(status);
 
         return orderMapper.toDto(orderRepository.save(order));
+    }
+
+    // ====================== Helper Methods ======================
+
+    private List<OrderItem> processCartItems(Cart cart, Order order) {
+        return cart.getCartItems().stream()
+                .map(cartItem -> {
+                    Product product = cartItem.getProduct();
+
+                    validateProductAvailability(product, cartItem.getQuantity());
+
+                    updateProductStock(product, cartItem.getQuantity());
+
+                    OrderItem orderItem = orderMapper.toOrderItem(cartItem);
+                    orderItem.setOrder(order);
+                    return orderItem;
+                }).toList();
+    }
+
+    private void validateProductAvailability(Product product, int requestedQty) {
+        if (product.getStatus() != ProductStatus.ACTIVE) {
+            throw new BadRequestException(
+                    String.format(
+                            ExceptionMessages.PRODUCT_STATUS_IS,
+                            product.getName(),
+                            product.getStatus()
+                    )
+            );
+        }
+
+        if (product.getStock() < requestedQty) {
+            throw new BadRequestException(
+                    String.format(
+                            ExceptionMessages.INSUFFICIENT_STOCK,
+                            product.getStock(),
+                            product.getName()
+                    )
+            );
+        }
+    }
+
+    private void updateProductStock(Product product, int quantity) {
+        product.setStock(product.getStock() - quantity);
+        if (product.getStock() == 0) {
+            product.setStatus(ProductStatus.OUT_OF_STOCK);
+        }
+    }
+
+    private void clearCart(Cart cart) {
+        cart.getCartItems().clear();
+        cartRepository.save(cart);
+    }
+
+    private BigDecimal calculateTotal(List<OrderItem> orderItems) {
+        return orderItems.stream()
+                .map(item -> item
+                        .getPrice()
+                        .multiply(BigDecimal.valueOf(item.getQuantity()))
+                )
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private void restoreProductStock(Order order) {
+        order.getOrderItems().forEach(orderItem -> {
+            Product product = orderItem.getProduct();
+            product.setStock(product.getStock() + orderItem.getQuantity());
+
+            if (product.getStatus() == ProductStatus.OUT_OF_STOCK && product.getStock() > 0) {
+                product.setStatus(ProductStatus.ACTIVE);
+            }
+        });
     }
 }
