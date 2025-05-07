@@ -21,6 +21,8 @@ import com.nashtech.ecommercespring.security.JwtTokenProvider;
 import com.nashtech.ecommercespring.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -57,6 +59,8 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
 
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final CacheManager cacheManager;
 
     @Override
     public JwtAuthResponse login(AuthRequest request, HttpServletResponse httpServletResponse) {
@@ -190,6 +194,9 @@ public class UserServiceImpl implements UserService {
                 )
                 .collect(Collectors.toSet());
 
+        // Evict cache entry manually
+        removeUserFromCache(user.getEmail());
+
         userMapper.updateUserFromDto(userReqDTO, user);
 
         //        Update encoded password
@@ -210,6 +217,9 @@ public class UserServiceImpl implements UserService {
                         String.format(ExceptionMessages.NOT_FOUND, id))
                 );
 
+        // Evict cache entry manually
+        removeUserFromCache(user.getEmail());
+
         user.setDeleted(true);
         userRepository.save(user);
     }
@@ -224,5 +234,12 @@ public class UserServiceImpl implements UserService {
                 );
 
         return userMapper.toDto(user);
+    }
+
+    private void removeUserFromCache(String email) {
+        Cache usersCache = cacheManager.getCache("users");
+        if (usersCache != null) {
+            usersCache.evict(email);
+        }
     }
 }
