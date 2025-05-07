@@ -27,6 +27,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -68,6 +70,12 @@ public class UserServiceImplTest {
 
     @Mock
     private JwtTokenProvider jwtTokenProvider;
+
+    @Mock
+    private CacheManager cacheManager;
+
+    @Mock
+    private Cache usersCache;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -349,6 +357,7 @@ public class UserServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
         when(userRepository.findByEmail(userReqDTO.getEmail())).thenReturn(Optional.empty());
         when(roleRepository.findById(roleId)).thenReturn(Optional.of(role));
+        when(cacheManager.getCache("users")).thenReturn(usersCache);
         doNothing().when(userMapper).updateUserFromDto(userReqDTO, existingUser);
         when(encoder.encode(userReqDTO.getPassword())).thenReturn("encodedPassword");
         when(userRepository.save(existingUser)).thenReturn(updatedUser);
@@ -367,6 +376,7 @@ public class UserServiceImplTest {
         verify(userRepository).findById(userId);
         verify(userRepository).findByEmail(userReqDTO.getEmail());
         verify(roleRepository).findById(roleId);
+        verify(cacheManager).getCache("users");
         verify(encoder).encode(userReqDTO.getPassword());
         verify(userRepository).save(existingUser);
         verify(userMapper).toDto(updatedUser);
@@ -433,6 +443,7 @@ public class UserServiceImplTest {
         user.setDeleted(false);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(cacheManager.getCache("users")).thenReturn(usersCache);
         when(userRepository.save(user)).thenReturn(user);
 
         // Act
@@ -441,6 +452,7 @@ public class UserServiceImplTest {
         // Assert
         assertTrue(user.isDeleted());
         verify(userRepository).findById(userId);
+        verify(cacheManager).getCache("users");
         verify(userRepository).save(user);
     }
 
