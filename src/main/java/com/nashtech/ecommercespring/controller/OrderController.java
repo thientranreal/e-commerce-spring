@@ -1,11 +1,13 @@
 package com.nashtech.ecommercespring.controller;
 
+import com.nashtech.ecommercespring.dto.request.OrderReqDTO;
 import com.nashtech.ecommercespring.dto.response.OrderDTO;
 import com.nashtech.ecommercespring.response.ApiResponse;
 import com.nashtech.ecommercespring.response.SuccessMessages;
 import com.nashtech.ecommercespring.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +24,12 @@ public class OrderController {
 
     @PostMapping
     @Operation(summary = "Place an order for a user")
-    public ResponseEntity<ApiResponse<OrderDTO>> placeOrder(@RequestParam UUID userId) {
+    public ResponseEntity<ApiResponse<OrderDTO>> placeOrder(@RequestBody @Valid OrderReqDTO orderReqDTO) {
         return ResponseEntity.ok(
                 ApiResponse.<OrderDTO>builder()
                         .success(true)
                         .message(String.format(SuccessMessages.CREATE_SUCCESS, "Order"))
-                        .data(orderService.placeOrder(userId))
+                        .data(orderService.placeOrder(orderReqDTO.getUserId(), orderReqDTO.getProductIds()))
                         .build()
         );
     }

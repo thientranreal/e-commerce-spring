@@ -30,7 +30,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public OrderDTO placeOrder(UUID userId) {
+    public OrderDTO placeOrder(UUID userId, List<UUID> productIds) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(
                         String.format(ExceptionMessages.NOT_FOUND, "User"))
@@ -41,7 +41,11 @@ public class OrderServiceImpl implements OrderService {
                         String.format(ExceptionMessages.NOT_FOUND, "Cart"))
                 );
 
-        if (cart.getCartItems().isEmpty()) {
+        List<CartItem> selectedItems = cart.getCartItems().stream()
+                .filter(item -> productIds.contains(item.getProduct().getId()))
+                .toList();
+
+        if (selectedItems.isEmpty()) {
             throw new BadRequestException(
                     String.format(ExceptionMessages.IS_EMPTY, "Cart")
             );
@@ -52,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.PENDING);
 
         // Check stock and convert to order items
-        List<OrderItem> orderItems = processCartItems(cart, order);
+        List<OrderItem> orderItems = processCartItems(selectedItems, order);
         order.setOrderItems(orderItems);
 
 //        Calculate total price
@@ -61,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
         // Save order and clear cart
         order = orderRepository.save(order);
 
-        clearCart(cart);
+        clearCart(cart, productIds);
 
         return orderMapper.toDto(order);
     }
@@ -105,8 +109,8 @@ public class OrderServiceImpl implements OrderService {
 
     // ====================== Helper Methods ======================
 
-    private List<OrderItem> processCartItems(Cart cart, Order order) {
-        return cart.getCartItems().stream()
+    private List<OrderItem> processCartItems(List<CartItem> selectedItems, Order order) {
+        return selectedItems.stream()
                 .map(cartItem -> {
                     Product product = cartItem.getProduct();
 
@@ -149,8 +153,8 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private void clearCart(Cart cart) {
-        cart.getCartItems().clear();
+    private void clearCart(Cart cart, List<UUID> productIds) {
+        cart.getCartItems().removeIf(item -> productIds.contains(item.getProduct().getId()));
         cartRepository.save(cart);
     }
 
