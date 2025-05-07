@@ -13,7 +13,9 @@ public class ExceptionMessages {
     public static final String PAYMENT_FAILED = "Payment id: %s failed";
     public static final String PAYMENT_INVALID_SIGNATURE = "Payment id: %s invalid signature";
 
-    public static final String UNEXPECTED_ERROR = "Unexpected error occurred";
+    public static final String UNEXPECTED_ERROR = "Unexpected error occurred: {}";
 
     public static final String PRODUCT_NOT_PURCHASED = "You must purchase %s to perform this action.";
+
+    public static final String UNAUTHORIZED_ACCESS = "Unauthorized access to {} from IP {}: {}";
 }

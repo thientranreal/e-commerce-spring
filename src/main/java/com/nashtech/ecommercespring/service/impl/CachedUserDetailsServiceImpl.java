@@ -1,5 +1,6 @@
 package com.nashtech.ecommercespring.service.impl;
 
+import com.nashtech.ecommercespring.exception.ExceptionMessages;
 import com.nashtech.ecommercespring.exception.NotFoundException;
 import com.nashtech.ecommercespring.model.User;
 import com.nashtech.ecommercespring.repository.UserRepository;
@@ -24,7 +25,9 @@ public class CachedUserDetailsServiceImpl implements CachedUserDetailsService {
     public UserDetails getUserDetailsByEmail(String email) {
 
         User user = userRepository.findByEmailAndDeletedFalse(email)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(ExceptionMessages.NOT_FOUND, email))
+                );
 
         Set<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getRoleName().name()))
