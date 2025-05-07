@@ -73,21 +73,26 @@ public class RatingServiceImpl implements RatingService {
         }
 
 //        Calculate avg rating
-        int newRating = ratingReqDTO.getRatingValue();
-        int currentCount = product.getRatingCount();
-
-        double currentAvg = product.getAvgRating();
-        double newAvg = ((currentAvg * currentCount) + newRating) / (currentCount + 1);
-
-        product.setAvgRating(newAvg);
-        product.setRatingCount(currentCount + 1);
-
-        productRepository.save(product);
+        updateProductRating(product, ratingReqDTO.getRatingValue());
 
         Rating rating = ratingMapper.toEntity(ratingReqDTO);
         rating.setProduct(product);
         rating.setUser(user);
 
         return ratingMapper.toDto(ratingRepository.save(rating));
+    }
+
+//    ==================================== Helper Method===========================================
+
+    private void updateProductRating(Product product, int newRating) {
+        int currentCount = product.getRatingCount();
+        double currentAvg = product.getAvgRating();
+
+        double newAvg = ((currentAvg * currentCount) + newRating) / (currentCount + 1);
+
+        product.setAvgRating(newAvg);
+        product.setRatingCount(currentCount + 1);
+
+        productRepository.save(product);
     }
 }

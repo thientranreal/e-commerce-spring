@@ -23,7 +23,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
             return (String) uploadResult.get("url");
         } catch (IOException io) {
-            throw new BadRequestException(String.format(ExceptionMessages.IMAGE_UPLOAD_FAILED));
+            throw new BadRequestException(ExceptionMessages.IMAGE_UPLOAD_FAILED);
         }
     }
 
@@ -34,7 +34,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             String publicId = extractPublicId(imageUrl);
             cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
         } catch (IOException e) {
-            throw new BadRequestException(String.format(ExceptionMessages.IMAGE_DELETE_FAILED));
+            throw new BadRequestException(ExceptionMessages.IMAGE_DELETE_FAILED);
         }
     }
 

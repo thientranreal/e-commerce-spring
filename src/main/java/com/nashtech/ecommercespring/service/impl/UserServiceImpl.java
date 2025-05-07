@@ -73,13 +73,7 @@ public class UserServiceImpl implements UserService {
 
         String token = jwtTokenProvider.generateToken(authentication);
 
-        ResponseCookie cookie = ResponseCookie.from("spring_token", token)
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(24 * 60 * 60) // 1 day
-                .sameSite("Strict")
-                .build();
+        ResponseCookie cookie = createCookie(token, 24 * 60 * 60);
 
         // Set cookie in response header
         httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -93,13 +87,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void logout(HttpServletResponse httpServletResponse) {
         // Create an expired cookie
-        ResponseCookie cookie = ResponseCookie.from("spring_token", "")
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(0) // expires immediately
-                .sameSite("Strict")
-                .build();
+        ResponseCookie cookie = createCookie("", 0);
 
         // Add the cookie to the response
         httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -236,10 +224,22 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(user);
     }
 
+    // ======================================= Helper Method ====================================
+
     private void removeUserFromCache(String email) {
         Cache usersCache = cacheManager.getCache("users");
         if (usersCache != null) {
             usersCache.evict(email);
         }
+    }
+
+    private ResponseCookie createCookie(String token, long maxAge) {
+        return ResponseCookie.from("spring_token", token)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(maxAge)
+                .sameSite("Strict")
+                .build();
     }
 }
