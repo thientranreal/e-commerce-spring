@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationErrors(MethodArgumentNotValidException ex) {
 
-        logger.error(ExceptionMessages.UNEXPECTED_ERROR, ex);
+        logger.error(ExceptionMessages.UNEXPECTED_ERROR, ex.getMessage(), ex);
 
         Map<String, String> errors = new HashMap<>();
 
@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiResponse<Void>> handleBadRequest(BadRequestException ex) {
 
-        logger.error(ExceptionMessages.UNEXPECTED_ERROR, ex);
+        logger.error(ExceptionMessages.UNEXPECTED_ERROR, ex.getMessage(), ex);
 
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .success(false)
@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> handleNotFound(NotFoundException ex) {
 
-        logger.error(ExceptionMessages.UNEXPECTED_ERROR, ex);
+        logger.error(ExceptionMessages.UNEXPECTED_ERROR, ex.getMessage(), ex);
 
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .success(false)
@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception ex) {
 
-        logger.error(ExceptionMessages.UNEXPECTED_ERROR, ex);
+        logger.error(ExceptionMessages.UNEXPECTED_ERROR, ex.getMessage(), ex);
 
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .success(false)
