@@ -13,6 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class UserReqDTO {
+    @NotBlank
     @Email
     private String email;
 
