@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/api/v1/categories")
 @Tag(name = "Category", description = "Category APIs")
 public class CategoryController {
 

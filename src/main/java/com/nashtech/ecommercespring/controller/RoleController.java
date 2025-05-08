@@ -16,7 +16,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/roles")
+@RequestMapping("/api/v1/roles")
 @Tag(name = "Admin Role", description = "Admin Role management APIs")
 public class RoleController {
 

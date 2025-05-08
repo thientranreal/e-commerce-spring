@@ -5,27 +5,27 @@ public class SecurityConstants {
             "/v3/api-docs/**",
             "/swagger-ui.html",
             "/swagger-ui/**",
-            "/api/users/login",
-            "/api/users/signup",
-            "/api/users/logout",
-            "/api/vnpay/**"
+            "/api/v*/users/login",
+            "/api/v*/users/signup",
+            "/api/v*/users/logout",
+            "/api/v*/vnpay/**"
     };
 
     public static final String[] ADMIN_API = {
-            "/api/roles/**",
-            "/api/users/**",
+            "/api/v*/roles/**",
+            "/api/v*/users/**",
     };
 
     public static final String[] USER_API = {
-            "/api/cart/**",
-            "/api/orders/**",
-            "/api/users/me"
+            "/api/v*/cart/**",
+            "/api/v*/orders/**",
+            "/api/v*/users/me"
     };
 
-    public static final String RATING_API = "/api/ratings/**";
+    public static final String RATING_API = "/api/v*/ratings/**";
 
     public static final String[] ADMIN_WRITE_API = {
-            "/api/categories/**",
-            "/api/products/**"
+            "/api/v*/categories/**",
+            "/api/v*/products/**"
     };
 }

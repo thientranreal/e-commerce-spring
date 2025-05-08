@@ -24,7 +24,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/v1/products")
 @Tag(name = "Product", description = "Product APIs")
 public class ProductController {
     private final ProductImageService productImageService;

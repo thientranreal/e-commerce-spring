@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/ratings")
+@RequestMapping("/api/v1/ratings")
 @Tag(name = "Rating", description = "Rating APIs")
 public class RatingController {
     private final RatingService ratingService;

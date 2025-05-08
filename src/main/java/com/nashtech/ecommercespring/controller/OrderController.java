@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/api/v1/orders")
 @Tag(name = "Order", description = "Order APIs")
 public class OrderController {
     private final OrderService orderService;

@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/api/v1/cart")
 @Tag(name = "Cart", description = "Cart APIs")
 public class CartController {
     private final CartService cartService;
